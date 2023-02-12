@@ -162,6 +162,17 @@ humanizeDuration(400, {
 }); // '1 year, 1 month, 5 days'
 ```
 
+**timeAdverb**
+
+Time adverb added to the result according to duration. This accepts negative durations while using it.
+
+```js
+humanizeDuration(363000); // '6 minutes, 3 seconds'
+humanizeDuration(363000, { timeAdverb: true }); // 'in 6 minutes, 3 seconds'
+humanizeDuration(-363000, { timeAdverb: true }); // '6 minutes, 3 seconds ago'
+humanizeDuration(-363000, { language: 'tr', timeAdverb: true }); // '6 dakika, 3 saniye önce'
+```
+
 **Combined example**
 
 ```js
