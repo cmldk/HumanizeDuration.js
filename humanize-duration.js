@@ -32,7 +32,9 @@
     ms: function (c) {
       return (c === 1 ? "χιλιοστό" : "χιλιοστά") + " του δευτερολέπτου";
     },
-    decimal: ","
+    decimal: ",",
+    future: "σε %s",
+    past: "%s πριν"
   };
 
   var ARABIC_DIGITS = ["۰", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
@@ -61,7 +63,9 @@
       ms: function (c) {
         return "millisekonde" + (c === 1 ? "" : "s");
       },
-      decimal: ","
+      decimal: ",",
+      future: "oor %s",
+      past: "%s gelede"
     },
     ar: {
       y: function (c) {
@@ -102,7 +106,9 @@
           }
         }
         return characters.join("");
-      }
+      },
+      future: "بعد %s",
+      past: "منذ %s"
     },
     bg: {
       y: function (c) {
@@ -129,7 +135,9 @@
       ms: function (c) {
         return ["милисекунди", "милисекунда", "милисекунди"][getSlavicForm(c)];
       },
-      decimal: ","
+      decimal: ",",
+      future: "след %s",
+      past: "преди %s"
     },
     bn: {
       y: "বছর",
@@ -139,7 +147,9 @@
       h: "ঘন্টা",
       m: "মিনিট",
       s: "সেকেন্ড",
-      ms: "মিলিসেকেন্ড"
+      ms: "মিলিসেকেন্ড",
+      future: "%s পরে",
+      past: "%s আগে"
     },
     ca: {
       y: function (c) {
@@ -166,7 +176,9 @@
       ms: function (c) {
         return "milisegon" + (c === 1 ? "" : "s");
       },
-      decimal: ","
+      decimal: ",",
+      future: "d'aquí %s",
+      past: "fa %s"
     },
     cs: {
       y: function (c) {
@@ -197,7 +209,9 @@
           getCzechOrSlovakForm(c)
         ];
       },
-      decimal: ","
+      decimal: ",",
+      future: "za %s",
+      past: "před %s"
     },
     cy: {
       y: "flwyddyn",
@@ -207,7 +221,9 @@
       h: "awr",
       m: "munud",
       s: "eiliad",
-      ms: "milieiliad"
+      ms: "milieiliad",
+      future: "mewn %s",
+      past: "%s yn ôl"
     },
     da: {
       y: "år",
@@ -232,7 +248,9 @@
       ms: function (c) {
         return "millisekund" + (c === 1 ? "" : "er");
       },
-      decimal: ","
+      decimal: ",",
+      future: "om %s",
+      past: "%s siden"
     },
     de: {
       y: function (c) {
@@ -259,7 +277,9 @@
       ms: function (c) {
         return "Millisekunde" + (c === 1 ? "" : "n");
       },
-      decimal: ","
+      decimal: ",",
+      future: "in %s",
+      past: "vor %s"
     },
     el: greek,
     en: {
@@ -287,7 +307,9 @@
       ms: function (c) {
         return "millisecond" + (c === 1 ? "" : "s");
       },
-      decimal: "."
+      decimal: ".",
+      future: "in %s",
+      past: "%s ago"
     },
     eo: {
       y: function (c) {
@@ -314,7 +336,9 @@
       ms: function (c) {
         return "milisekundo" + (c === 1 ? "" : "j");
       },
-      decimal: ","
+      decimal: ",",
+      future: "post %s",
+      past: "antaŭ %s"
     },
     es: {
       y: function (c) {
@@ -341,7 +365,9 @@
       ms: function (c) {
         return "milisegundo" + (c === 1 ? "" : "s");
       },
-      decimal: ","
+      decimal: ",",
+      future: "en %s",
+      past: "hace %s"
     },
     et: {
       y: function (c) {
@@ -368,7 +394,9 @@
       ms: function (c) {
         return "millisekund" + (c === 1 ? "" : "it");
       },
-      decimal: ","
+      decimal: ",",
+      future: "%s pärast",
+      past: "%s tagasi"
     },
     eu: {
       y: "urte",
@@ -379,7 +407,9 @@
       m: "minutu",
       s: "segundo",
       ms: "milisegundo",
-      decimal: ","
+      decimal: ",",
+      future: "%s barru",
+      past: "duela %s"
     },
     fa: {
       y: "سال",
@@ -390,7 +420,9 @@
       m: "دقیقه",
       s: "ثانیه",
       ms: "میلی ثانیه",
-      decimal: "."
+      decimal: ".",
+      future: "در %s",
+      past: "%s پیش"
     },
     fi: {
       y: function (c) {
@@ -417,7 +449,9 @@
       ms: function (c) {
         return "millisekunti" + (c === 1 ? "" : "a");
       },
-      decimal: ","
+      decimal: ",",
+      future: "%s päästä",
+      past: "%s sitten"
     },
     fo: {
       y: "ár",
@@ -438,7 +472,9 @@
       },
       s: "sekund",
       ms: "millisekund",
-      decimal: ","
+      decimal: ",",
+      future: "um %s",
+      past: "%s síðani"
     },
     fr: {
       y: function (c) {
@@ -463,7 +499,9 @@
       ms: function (c) {
         return "milliseconde" + (c >= 2 ? "s" : "");
       },
-      decimal: ","
+      decimal: ",",
+      future: "dans %s",
+      past: "il y a %s"
     },
     gr: greek,
     he: {
@@ -491,7 +529,9 @@
       ms: function (c) {
         return c === 1 ? "מילישנייה" : "מילישניות";
       },
-      decimal: "."
+      decimal: ".",
+      future: "בעוד %s",
+      past: "לפני %s"
     },
     hr: {
       y: function (c) {
@@ -551,7 +591,9 @@
         }
         return "milisekundi";
       },
-      decimal: ","
+      decimal: ",",
+      future: "za %s",
+      past: "prije %s"
     },
     hi: {
       y: "साल",
@@ -568,7 +610,9 @@
       m: "मिनट",
       s: "सेकंड",
       ms: "मिलीसेकंड",
-      decimal: "."
+      decimal: ".",
+      future: "%s में",
+      past: "%s पहले"
     },
     hu: {
       y: "év",
@@ -579,7 +623,9 @@
       m: "perc",
       s: "másodperc",
       ms: "ezredmásodperc",
-      decimal: ","
+      decimal: ",",
+      future: "%s múlva",
+      past: "%s"
     },
     id: {
       y: "tahun",
@@ -590,7 +636,9 @@
       m: "menit",
       s: "detik",
       ms: "milidetik",
-      decimal: "."
+      decimal: ".",
+      future: "dalam %s",
+      past: "%s yang lalu"
     },
     is: {
       y: "ár",
@@ -615,7 +663,9 @@
       ms: function (c) {
         return "millisekúnd" + (c === 1 ? "a" : "ur");
       },
-      decimal: "."
+      decimal: ".",
+      future: "eftir %s",
+      past: "fyrir %s síðan"
     },
     it: {
       y: function (c) {
@@ -642,7 +692,9 @@
       ms: function (c) {
         return "millisecond" + (c === 1 ? "o" : "i");
       },
-      decimal: ","
+      decimal: ",",
+      future: "tra %s",
+      past: "%s fa"
     },
     ja: {
       y: "年",
@@ -653,7 +705,9 @@
       m: "分",
       s: "秒",
       ms: "ミリ秒",
-      decimal: "."
+      decimal: ".",
+      future: "%s後",
+      past: "%s前"
     },
     km: {
       y: "ឆ្នាំ",
@@ -663,7 +717,9 @@
       h: "ម៉ោង",
       m: "នាទី",
       s: "វិនាទី",
-      ms: "មិល្លីវិនាទី"
+      ms: "មិល្លីវិនាទី",
+      future: "%sទៀត",
+      past: "%sមុន"
     },
     kn: {
       y: function (c) {
@@ -689,7 +745,9 @@
       },
       ms: function (c) {
         return c === 1 ? "ಮಿಲಿಸೆಕೆಂಡ್" : "ಮಿಲಿಸೆಕೆಂಡುಗಳು";
-      }
+      },
+      future: "%s ನಂತರ",
+      past: "%s ಹಿಂದೆ"
     },
     ko: {
       y: "년",
@@ -700,7 +758,9 @@
       m: "분",
       s: "초",
       ms: "밀리 초",
-      decimal: "."
+      decimal: ".",
+      future: "%s 후",
+      past: "%s 전"
     },
     ku: {
       y: "sal",
@@ -711,7 +771,9 @@
       m: "deqe",
       s: "saniye",
       ms: "mîlîçirk",
-      decimal: ","
+      decimal: ",",
+      future: "له‌ %s",
+      past: "%s"
     },
     lo: {
       y: "ປີ",
@@ -722,7 +784,9 @@
       m: "ນາທີ",
       s: "ວິນາທີ",
       ms: "ມິນລິວິນາທີ",
-      decimal: ","
+      decimal: ",",
+      future: "ອີກ %s",
+      past: "%sຜ່ານມາ"
     },
     lt: {
       y: function (c) {
@@ -753,7 +817,9 @@
           getLithuanianForm(c)
         ];
       },
-      decimal: ","
+      decimal: ",",
+      future: "po %s",
+      past: "prieš %s"
     },
     lv: {
       y: function (c) {
@@ -780,7 +846,9 @@
       ms: function (c) {
         return getLatvianForm(c) ? "milisekunde" : "milisekundes";
       },
-      decimal: ","
+      decimal: ",",
+      future: "pēc %s",
+      past: "pirms %s"
     },
     mk: {
       y: function (c) {
@@ -807,7 +875,9 @@
       ms: function (c) {
         return c === 1 ? "милисекунда" : "милисекунди";
       },
-      decimal: ","
+      decimal: ",",
+      future: "за %s",
+      past: "пред %s"
     },
     mn: {
       y: "жил",
@@ -818,7 +888,9 @@
       m: "минут",
       s: "секунд",
       ms: "миллисекунд",
-      decimal: "."
+      decimal: ".",
+      future: "%s дараа",
+      past: "%s өмнө"
     },
     mr: {
       y: function (c) {
@@ -836,7 +908,9 @@
         return c === 1 ? "मिनिट" : "मिनिटे";
       },
       s: "सेकंद",
-      ms: "मिलिसेकंद"
+      ms: "मिलिसेकंद",
+      future: "%sमध्ये",
+      past: "%sपूर्वी"
     },
     ms: {
       y: "tahun",
@@ -847,7 +921,9 @@
       m: "minit",
       s: "saat",
       ms: "milisaat",
-      decimal: "."
+      decimal: ".",
+      future: "dalam %s",
+      past: "%s yang lepas"
     },
     nl: {
       y: "jaar",
@@ -870,7 +946,9 @@
       ms: function (c) {
         return c === 1 ? "milliseconde" : "milliseconden";
       },
-      decimal: ","
+      decimal: ",",
+      future: "over %s",
+      past: "%s geleden"
     },
     no: {
       y: "år",
@@ -895,7 +973,9 @@
       ms: function (c) {
         return "millisekund" + (c === 1 ? "" : "er");
       },
-      decimal: ","
+      decimal: ",",
+      future: "om %s",
+      past: "%s siden"
     },
     pl: {
       y: function (c) {
@@ -926,7 +1006,9 @@
           getPolishForm(c)
         ];
       },
-      decimal: ","
+      decimal: ",",
+      future: "za %s",
+      past: "%s temu"
     },
     pt: {
       y: function (c) {
@@ -953,7 +1035,9 @@
       ms: function (c) {
         return "milissegundo" + (c === 1 ? "" : "s");
       },
-      decimal: ","
+      decimal: ",",
+      future: "em %s",
+      past: "há %s"
     },
     ro: {
       y: function (c) {
@@ -980,7 +1064,9 @@
       ms: function (c) {
         return c === 1 ? "milisecundă" : "milisecunde";
       },
-      decimal: ","
+      decimal: ",",
+      future: "peste %s",
+      past: "%s în urmă"
     },
     ru: {
       y: function (c) {
@@ -1009,7 +1095,9 @@
           getSlavicForm(c)
         ];
       },
-      decimal: ","
+      decimal: ",",
+      future: "через %s",
+      past: "%s назад"
     },
     sq: {
       y: function (c) {
@@ -1028,7 +1116,9 @@
       ms: function (c) {
         return "milisekond" + (c === 1 ? "ë" : "a");
       },
-      decimal: ","
+      decimal: ",",
+      future: "në %s",
+      past: "%s më parë"
     },
     sr: {
       y: function (c) {
@@ -1055,7 +1145,9 @@
       ms: function (c) {
         return ["милисекунди", "милисекунда", "милисекунде"][getSlavicForm(c)];
       },
-      decimal: ","
+      decimal: ",",
+      future: "за %s",
+      past: "пре %s"
     },
     ta: {
       y: function (c) {
@@ -1081,7 +1173,9 @@
       },
       ms: function (c) {
         return "மில்லி விநாடி" + (c === 1 ? "" : "கள்");
-      }
+      },
+      future: "%s இல்",
+      past: "%s முன்"
     },
     te: {
       y: function (c) {
@@ -1107,7 +1201,9 @@
       },
       ms: function (c) {
         return c === 1 ? "మిల్లీసెకన్" : "మిల్లీసెకన్లు";
-      }
+      },
+      future: "%s లో",
+      past: "%s క్రితం"
     },
     uk: {
       y: function (c) {
@@ -1134,7 +1230,9 @@
       ms: function (c) {
         return ["мілісекунд", "мілісекунда", "мілісекунди"][getSlavicForm(c)];
       },
-      decimal: ","
+      decimal: ",",
+      future: "за %s",
+      past: "%s тому"
     },
     ur: {
       y: "سال",
@@ -1151,7 +1249,9 @@
       m: "منٹ",
       s: "سیکنڈ",
       ms: "ملی سیکنڈ",
-      decimal: "."
+      decimal: ".",
+      future: "%s بعد",
+      past: "%s قبل"
     },
     sk: {
       y: function (c) {
@@ -1186,7 +1286,9 @@
           getCzechOrSlovakForm(c)
         ];
       },
-      decimal: ","
+      decimal: ",",
+      future: "za %s",
+      past: "pred %s"
     },
     sl: {
       y: function (c) {
@@ -1277,7 +1379,9 @@
           return "milisekund";
         }
       },
-      decimal: ","
+      decimal: ",",
+      future: "čez %s",
+      past: "pred %s"
     },
     sv: {
       y: "år",
@@ -1302,7 +1406,9 @@
       ms: function (c) {
         return "millisekund" + (c === 1 ? "" : "er");
       },
-      decimal: ","
+      decimal: ",",
+      future: "om %s",
+      past: "för %s sedan"
     },
     sw: {
       y: function (c) {
@@ -1322,7 +1428,9 @@
       s: "sekunde",
       ms: "milisekunde",
       decimal: ".",
-      _numberFirst: true
+      _numberFirst: true,
+      future: "%s baadaye",
+      past: "tokea %s"
     },
     tr: {
       y: "yıl",
@@ -1333,7 +1441,9 @@
       m: "dakika",
       s: "saniye",
       ms: "milisaniye",
-      decimal: ","
+      decimal: ",",
+      future: "%s sonra",
+      past: "%s önce"
     },
     th: {
       y: "ปี",
@@ -1344,7 +1454,9 @@
       m: "นาที",
       s: "วินาที",
       ms: "มิลลิวินาที",
-      decimal: "."
+      decimal: ".",
+      future: "อีก %s",
+      past: "%sที่แล้ว"
     },
     vi: {
       y: "năm",
@@ -1355,7 +1467,9 @@
       m: "phút",
       s: "giây",
       ms: "mili giây",
-      decimal: ","
+      decimal: ",",
+      future: "%s tới",
+      past: "%s trước"
     },
     zh_CN: {
       y: "年",
@@ -1366,7 +1480,9 @@
       m: "分钟",
       s: "秒",
       ms: "毫秒",
-      decimal: "."
+      decimal: ".",
+      future: "%s后",
+      past: "%s前"
     },
     zh_TW: {
       y: "年",
@@ -1377,7 +1493,9 @@
       m: "分鐘",
       s: "秒",
       ms: "毫秒",
-      decimal: "."
+      decimal: ".",
+      future: "%s後",
+      past: "%s前"
     }
   };
 
@@ -1408,7 +1526,8 @@
           m: 60000,
           s: 1000,
           ms: 1
-        }
+        },
+        timeAdverb: false
       },
       passedOptions
     );
@@ -1443,14 +1562,20 @@
 
   // doHumanization does the bulk of the work.
   function doHumanization(ms, options) {
-    var i, len, piece;
+    var i, len, piece, adverb;
+
+    var dictionary = getDictionary(options);
+    var pieces = [];
+
+    // time adverb control
+    if (options.timeAdverb && ms != 0) {
+      if (ms < 0) adverb = dictionary["past"];
+      else adverb = dictionary["future"];
+    }
 
     // Make sure we have a positive number.
     // Has the nice sideffect of turning Number objects into primitives.
     ms = Math.abs(ms);
-
-    var dictionary = getDictionary(options);
-    var pieces = [];
 
     // Start at the top and keep removing units, bit by bit.
     var unitName, unitMS, unitCount;
@@ -1543,17 +1668,23 @@
         delimiter = ", ";
       }
 
+      var _result;
       if (!options.conjunction || result.length === 1) {
-        return result.join(delimiter);
+        _result = result.join(delimiter);
+        if (adverb) _result = adverb.replace("%s", _result);
+        return _result;
       } else if (result.length === 2) {
-        return result.join(options.conjunction);
+        _result = result.join(options.conjunction);
+        if (adverb) _result = adverb.replace("%s", _result);
+        return _result;
       } else if (result.length > 2) {
-        return (
+        _result =
           result.slice(0, -1).join(delimiter) +
           (options.serialComma ? "," : "") +
           options.conjunction +
-          result.slice(-1)
-        );
+          result.slice(-1);
+        if (adverb) _result = adverb.replace("%s", _result);
+        return _result;
       }
     } else {
       return render(

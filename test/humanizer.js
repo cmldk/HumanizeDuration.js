@@ -315,4 +315,21 @@ describe("humanizer", function () {
       "10 segundos"
     );
   });
+
+  it("accepts negative durations using the option timeAdverb", function () {
+    const h = humanizer();
+
+    assert.strictEqual(
+      h(363000, { timeAdverb: true }),
+      "in 6 minutes, 3 seconds"
+    );
+    assert.strictEqual(
+      h(-363000, { timeAdverb: true }),
+      "6 minutes, 3 seconds ago"
+    );
+    assert.strictEqual(
+      h(-363000, { language: "tr", timeAdverb: true }),
+      "6 dakika, 3 saniye önce"
+    );
+  });
 });
