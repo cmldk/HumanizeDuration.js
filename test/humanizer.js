@@ -1,6 +1,7 @@
 const humanizeDuration = require("..");
 const humanizer = humanizeDuration.humanizer;
-const assert = require("assert");
+const { describe, it } = require("node:test");
+const assert = require("node:assert/strict");
 const ms = require("ms");
 
 describe("humanizer", function () {
