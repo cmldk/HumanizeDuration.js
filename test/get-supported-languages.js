@@ -1,8 +1,12 @@
-const { getSupportedLanguages } = require("..");
-const test = require("node:test");
+// @ts-check
+
+const humanizeDuration = require("..");
+const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+
+const { getSupportedLanguages } = humanizeDuration;
 
 test("getSupportedLanguages lists all supported languages", (t, done) => {
   const definitionsPath = path.resolve(__dirname, "definitions");
@@ -13,8 +17,8 @@ test("getSupportedLanguages lists all supported languages", (t, done) => {
     }
 
     const languages = files
-      .filter((file) => path.extname(file) === ".csv")
-      .map((file) => path.basename(file, ".csv"));
+      .filter((file) => path.extname(file) === ".tsv")
+      .map((file) => path.basename(file, ".tsv"));
 
     assert.deepStrictEqual(languages.sort(), getSupportedLanguages().sort());
 

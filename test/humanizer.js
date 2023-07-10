@@ -1,3 +1,5 @@
+// @ts-check
+
 const humanizeDuration = require("..");
 const humanizer = humanizeDuration.humanizer;
 const { describe, it } = require("node:test");
@@ -169,7 +171,6 @@ describe("humanizer", function () {
     assert.strictEqual(h(1000), "1 second");
     assert.strictEqual(h(2000), "2 seconds");
     assert.strictEqual(h(540360012), "6 days, 6 hours");
-    assert.strictEqual(h(540360012), "6 days, 6 hours");
     assert.strictEqual(
       h(540360012, { largest: 3 }),
       "6 days, 6 hours, 6 minutes"
@@ -332,5 +333,23 @@ describe("humanizer", function () {
       h(-363000, { language: "tr", timeAdverb: true }),
       "6 dakika, 3 saniye önce"
     );
+  });
+     
+  it("can replace digits", function () {
+    const h = humanizer({
+      digitReplacements: [
+        "Zero",
+        "One",
+        "Two",
+        "Three",
+        "UNUSED",
+        "UNUSED",
+        "UNUSED",
+        "UNUSED",
+        "UNUSED",
+        "UNUSED",
+      ],
+    });
+    assert.strictEqual(h(123), "Zero.OneTwoThree seconds");
   });
 });
