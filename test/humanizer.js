@@ -334,7 +334,7 @@ describe("humanizer", function () {
       "6 dakika, 3 saniye önce"
     );
   });
-     
+
   it("can replace digits", function () {
     const h = humanizer({
       digitReplacements: [

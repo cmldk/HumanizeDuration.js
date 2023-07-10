@@ -290,7 +290,7 @@ Time adverb added to the result according to duration. This accepts negative dur
 humanizeDuration(363000); // '6 minutes, 3 seconds'
 humanizeDuration(363000, { timeAdverb: true }); // 'in 6 minutes, 3 seconds'
 humanizeDuration(-363000, { timeAdverb: true }); // '6 minutes, 3 seconds ago'
-humanizeDuration(-363000, { language: 'tr', timeAdverb: true }); // '6 dakika, 3 saniye önce'
+humanizeDuration(-363000, { language: "tr", timeAdverb: true }); // '6 dakika, 3 saniye önce'
 ```
 
 **Combined example**

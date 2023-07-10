@@ -36,6 +36,8 @@
  * @prop {Unit} m
  * @prop {Unit} s
  * @prop {Unit} ms
+ * @prop {string} future
+ * @prop {string} past
  * @prop {string} [decimal]
  * @prop {string} [delimiter]
  * @prop {DigitReplacements} [_digitReplacements]
@@ -58,6 +60,7 @@
  * @prop {UnitMeasures} [unitMeasures]
  * @prop {boolean} [serialComma]
  * @prop {DigitReplacements} [digitReplacements]
+ * @prop {boolean} [timeAdverb]
  */
 
 /**
@@ -94,6 +97,8 @@
     function (c) {
       return (c === 1 ? "χιλιοστό" : "χιλιοστά") + " του δευτερολέπτου";
     },
+    "σε %s",
+    "%s πριν",
     ","
   );
 
@@ -122,6 +127,8 @@
       function (c) {
         return "millisekonde" + (c === 1 ? "" : "s");
       },
+      "oor %s",
+      "%s gelede",
       ","
     ),
     ar: assign(
@@ -152,6 +159,8 @@
             getArabicForm(c)
           ];
         },
+        "بعد %s",
+        "منذ %s",
         ","
       ),
       {
@@ -184,6 +193,8 @@
       function (c) {
         return ["милисекунди", "милисекунда", "милисекунди"][getSlavicForm(c)];
       },
+      "след %s",
+      "преди %s",
       ","
     ),
     bn: language(
@@ -194,7 +205,9 @@
       "ঘন্টা",
       "মিনিট",
       "সেকেন্ড",
-      "মিলিসেকেন্ড"
+      "মিলিসেকেন্ড",
+      "%s পরে",
+      "%s আগে"
     ),
     ca: language(
       function (c) {
@@ -221,6 +234,8 @@
       function (c) {
         return "milisegon" + (c === 1 ? "" : "s");
       },
+      "d'aquí %s",
+      "fa %s",
       ","
     ),
     cs: language(
@@ -252,6 +267,8 @@
           getCzechOrSlovakForm(c)
         ];
       },
+      "za %s",
+      "před %s",
       ","
     ),
     cy: language(
@@ -262,7 +279,9 @@
       "awr",
       "munud",
       "eiliad",
-      "milieiliad"
+      "milieiliad",
+      "mewn %s",
+      "%s yn ôl"
     ),
     da: language(
       "år",
@@ -287,6 +306,8 @@
       function (c) {
         return "millisekund" + (c === 1 ? "" : "er");
       },
+      "om %s",
+      "%s siden",
       ","
     ),
     de: language(
@@ -314,6 +335,8 @@
       function (c) {
         return "Millisekunde" + (c === 1 ? "" : "n");
       },
+      "in %s",
+      "vor %s",
       ","
     ),
     el: GREEK,
@@ -341,7 +364,9 @@
       },
       function (c) {
         return "millisecond" + (c === 1 ? "" : "s");
-      }
+      },
+      "in %s",
+      "%s ago"
     ),
     eo: language(
       function (c) {
@@ -368,6 +393,8 @@
       function (c) {
         return "milisekundo" + (c === 1 ? "" : "j");
       },
+      "post %s",
+      "antaŭ %s",
       ","
     ),
     es: language(
@@ -395,6 +422,8 @@
       function (c) {
         return "milisegundo" + (c === 1 ? "" : "s");
       },
+      "en %s",
+      "hace %s",
       ","
     ),
     et: language(
@@ -422,6 +451,8 @@
       function (c) {
         return "millisekund" + (c === 1 ? "" : "it");
       },
+      "%s pärast",
+      "%s tagasi",
       ","
     ),
     eu: language(
@@ -433,6 +464,8 @@
       "minutu",
       "segundo",
       "milisegundo",
+      "%s barru",
+      "duela %s",
       ","
     ),
     fa: language(
@@ -443,7 +476,9 @@
       "ساعت",
       "دقیقه",
       "ثانیه",
-      "میلی ثانیه"
+      "میلی ثانیه",
+      "در %s",
+      "%s پیش"
     ),
     fi: language(
       function (c) {
@@ -470,6 +505,8 @@
       function (c) {
         return "millisekunti" + (c === 1 ? "" : "a");
       },
+      "%s päästä",
+      "%s sitten",
       ","
     ),
     fo: language(
@@ -491,6 +528,8 @@
       },
       "sekund",
       "millisekund",
+      "um %s",
+      "%s síðani",
       ","
     ),
     fr: language(
@@ -516,6 +555,8 @@
       function (c) {
         return "milliseconde" + (c >= 2 ? "s" : "");
       },
+      "dans %s",
+      "il y a %s",
       ","
     ),
     gr: GREEK,
@@ -543,7 +584,9 @@
       },
       function (c) {
         return c === 1 ? "מילישנייה" : "מילישניות";
-      }
+      },
+      "בעוד %s",
+      "לפני %s"
     ),
     hr: language(
       function (c) {
@@ -603,6 +646,8 @@
         }
         return "milisekundi";
       },
+      "za %s",
+      "prije %s",
       ","
     ),
     hi: language(
@@ -619,7 +664,9 @@
       },
       "मिनट",
       "सेकंड",
-      "मिलीसेकंड"
+      "मिलीसेकंड",
+      "%s में",
+      "%s पहले"
     ),
     hu: language(
       "év",
@@ -630,6 +677,8 @@
       "perc",
       "másodperc",
       "ezredmásodperc",
+      "%s múlva",
+      "%s",
       ","
     ),
     id: language(
@@ -640,7 +689,9 @@
       "jam",
       "menit",
       "detik",
-      "milidetik"
+      "milidetik",
+      "dalam %s",
+      "%s yang lalu"
     ),
     is: language(
       "ár",
@@ -664,7 +715,9 @@
       },
       function (c) {
         return "millisekúnd" + (c === 1 ? "a" : "ur");
-      }
+      },
+      "eftir %s",
+      "fyrir %s síðan"
     ),
     it: language(
       function (c) {
@@ -691,9 +744,22 @@
       function (c) {
         return "millisecond" + (c === 1 ? "o" : "i");
       },
+      "tra %s",
+      "%s fa",
       ","
     ),
-    ja: language("年", "ヶ月", "週", "日", "時間", "分", "秒", "ミリ秒"),
+    ja: language(
+      "年",
+      "ヶ月",
+      "週",
+      "日",
+      "時間",
+      "分",
+      "秒",
+      "ミリ秒",
+      "%s後",
+      "%s前"
+    ),
     km: language(
       "ឆ្នាំ",
       "ខែ",
@@ -702,7 +768,9 @@
       "ម៉ោង",
       "នាទី",
       "វិនាទី",
-      "មិល្លីវិនាទី"
+      "មិល្លីវិនាទី",
+      "%sទៀត",
+      "%sមុន"
     ),
     kn: language(
       function (c) {
@@ -728,9 +796,22 @@
       },
       function (c) {
         return c === 1 ? "ಮಿಲಿಸೆಕೆಂಡ್" : "ಮಿಲಿಸೆಕೆಂಡುಗಳು";
-      }
+      },
+      "%s ನಂತರ",
+      "%s ಹಿಂದೆ"
     ),
-    ko: language("년", "개월", "주일", "일", "시간", "분", "초", "밀리 초"),
+    ko: language(
+      "년",
+      "개월",
+      "주일",
+      "일",
+      "시간",
+      "분",
+      "초",
+      "밀리 초",
+      "%s 후",
+      "%s 전"
+    ),
     ku: language(
       "sal",
       "meh",
@@ -740,6 +821,8 @@
       "deqe",
       "saniye",
       "mîlîçirk",
+      "له‌ %s",
+      "%s",
       ","
     ),
     lo: language(
@@ -751,6 +834,8 @@
       "ນາທີ",
       "ວິນາທີ",
       "ມິນລິວິນາທີ",
+      "ອີກ %s",
+      "%sຜ່ານມາ",
       ","
     ),
     lt: language(
@@ -782,6 +867,8 @@
           getLithuanianForm(c)
         ];
       },
+      "po %s",
+      "prieš %s",
       ","
     ),
     lv: language(
@@ -809,6 +896,8 @@
       function (c) {
         return getLatvianForm(c) ? "milisekunde" : "milisekundes";
       },
+      "pēc %s",
+      "pirms %s",
       ","
     ),
     mk: language(
@@ -836,6 +925,8 @@
       function (c) {
         return c === 1 ? "милисекунда" : "милисекунди";
       },
+      "за %s",
+      "пред %s",
       ","
     ),
     mn: language(
@@ -846,7 +937,9 @@
       "цаг",
       "минут",
       "секунд",
-      "миллисекунд"
+      "миллисекунд",
+      "%s дараа",
+      "%s өмнө"
     ),
     mr: language(
       function (c) {
@@ -864,7 +957,9 @@
         return c === 1 ? "मिनिट" : "मिनिटे";
       },
       "सेकंद",
-      "मिलिसेकंद"
+      "मिलिसेकंद",
+      "%sमध्ये",
+      "%sपूर्वी"
     ),
     ms: language(
       "tahun",
@@ -874,7 +969,9 @@
       "jam",
       "minit",
       "saat",
-      "milisaat"
+      "milisaat",
+      "dalam %s",
+      "%s yang lepas"
     ),
     nl: language(
       "jaar",
@@ -897,6 +994,8 @@
       function (c) {
         return c === 1 ? "milliseconde" : "milliseconden";
       },
+      "over %s",
+      "%s geleden",
       ","
     ),
     no: language(
@@ -922,6 +1021,8 @@
       function (c) {
         return "millisekund" + (c === 1 ? "" : "er");
       },
+      "om %s",
+      "%s siden",
       ","
     ),
     pl: language(
@@ -953,6 +1054,8 @@
           getPolishForm(c)
         ];
       },
+      "za %s",
+      "%s temu",
       ","
     ),
     pt: language(
@@ -980,6 +1083,8 @@
       function (c) {
         return "milissegundo" + (c === 1 ? "" : "s");
       },
+      "em %s",
+      "há %s",
       ","
     ),
     ro: language(
@@ -1007,6 +1112,8 @@
       function (c) {
         return c === 1 ? "milisecundă" : "milisecunde";
       },
+      "peste %s",
+      "%s în urmă",
       ","
     ),
     ru: language(
@@ -1036,6 +1143,8 @@
           getSlavicForm(c)
         ];
       },
+      "через %s",
+      "%s назад",
       ","
     ),
     sq: language(
@@ -1055,6 +1164,8 @@
       function (c) {
         return "milisekond" + (c === 1 ? "ë" : "a");
       },
+      "në %s",
+      "%s më parë",
       ","
     ),
     sr: language(
@@ -1082,6 +1193,8 @@
       function (c) {
         return ["милисекунди", "милисекунда", "милисекунде"][getSlavicForm(c)];
       },
+      "за %s",
+      "пре %s",
       ","
     ),
     ta: language(
@@ -1108,7 +1221,9 @@
       },
       function (c) {
         return "மில்லி விநாடி" + (c === 1 ? "" : "கள்");
-      }
+      },
+      "%s இல்",
+      "%s முன்"
     ),
     te: language(
       function (c) {
@@ -1134,7 +1249,9 @@
       },
       function (c) {
         return c === 1 ? "మిల్లీసెకన్" : "మిల్లీసెకన్లు";
-      }
+      },
+      "%s లో",
+      "%s క్రితం"
     ),
     uk: language(
       function (c) {
@@ -1161,6 +1278,8 @@
       function (c) {
         return ["мілісекунд", "мілісекунда", "мілісекунди"][getSlavicForm(c)];
       },
+      "за %s",
+      "%s тому",
       ","
     ),
     ur: language(
@@ -1177,7 +1296,9 @@
       },
       "منٹ",
       "سیکنڈ",
-      "ملی سیکنڈ"
+      "ملی سیکنڈ",
+      "%s بعد",
+      "%s قبل"
     ),
     sk: language(
       function (c) {
@@ -1212,6 +1333,8 @@
           getCzechOrSlovakForm(c)
         ];
       },
+      "za %s",
+      "pred %s",
       ","
     ),
     sl: language(
@@ -1303,6 +1426,8 @@
           return "milisekund";
         }
       },
+      "čez %s",
+      "pred %s",
       ","
     ),
     sv: language(
@@ -1328,6 +1453,8 @@
       function (c) {
         return "millisekund" + (c === 1 ? "" : "er");
       },
+      "om %s",
+      "för %s sedan",
       ","
     ),
     sw: assign(
@@ -1347,7 +1474,9 @@
         },
         "dakika",
         "sekunde",
-        "milisekunde"
+        "milisekunde",
+        "%s baadaye",
+        "tokea %s"
       ),
       { _numberFirst: true }
     ),
@@ -1360,6 +1489,8 @@
       "dakika",
       "saniye",
       "milisaniye",
+      "%s sonra",
+      "%s önce",
       ","
     ),
     th: language(
@@ -1370,7 +1501,9 @@
       "ชั่วโมง",
       "นาที",
       "วินาที",
-      "มิลลิวินาที"
+      "มิลลิวินาที",
+      "อีก %s",
+      "%sที่แล้ว"
     ),
     vi: language(
       "năm",
@@ -1381,10 +1514,34 @@
       "phút",
       "giây",
       "mili giây",
+      "%s tới",
+      "%s trước",
       ","
     ),
-    zh_CN: language("年", "个月", "周", "天", "小时", "分钟", "秒", "毫秒"),
-    zh_TW: language("年", "個月", "周", "天", "小時", "分鐘", "秒", "毫秒")
+    zh_CN: language(
+      "年",
+      "个月",
+      "周",
+      "天",
+      "小时",
+      "分钟",
+      "秒",
+      "毫秒",
+      "%s后",
+      "%s前"
+    ),
+    zh_TW: language(
+      "年",
+      "個月",
+      "周",
+      "天",
+      "小時",
+      "分鐘",
+      "秒",
+      "毫秒",
+      "%s後",
+      "%s前"
+    )
   };
 
   /**
@@ -1398,12 +1555,25 @@
    * @param {Unit} m
    * @param {Unit} s
    * @param {Unit} ms
+   * @param {string} future
+   * @param {string} past
    * @param {string} [decimal]
    * @returns {Language}
    */
-  function language(y, mo, w, d, h, m, s, ms, decimal) {
+  function language(y, mo, w, d, h, m, s, ms, future, past, decimal) {
     /** @type {Language} */
-    var result = { y: y, mo: mo, w: w, d: d, h: h, m: m, s: s, ms: ms };
+    var result = {
+      y: y,
+      mo: mo,
+      w: w,
+      d: d,
+      h: h,
+      m: m,
+      s: s,
+      ms: ms,
+      future: future,
+      past: past
+    };
     if (typeof decimal !== "undefined") {
       result.decimal = decimal;
     }
@@ -1760,10 +1930,10 @@
 
   /**
    * @param {Piece[]} pieces
-   * @param {Pick<Required<Options>, "units" | "language" | "languages" | "fallbacks" | "delimiter" | "spacer" | "decimal" | "conjunction" | "maxDecimalPoints" | "serialComma" | "digitReplacements">} options
+   * @param {Pick<Required<Options>, "units" | "language" | "languages" | "fallbacks" | "delimiter" | "spacer" | "decimal" | "conjunction" | "maxDecimalPoints" | "serialComma" | "digitReplacements" | "timeAdverb">} options
    * @returns {string}
    */
-  function formatPieces(pieces, options) {
+  function formatPieces(pieces, options, ms) {
     var language = getLanguage(options);
 
     if (!pieces.length) {
@@ -1788,26 +1958,35 @@
       delimiter = ", ";
     }
 
+    // timeAdverb part
+    var adverb = "";
+    if (options.timeAdverb && ms != 0) {
+      adverb = language.future;
+      if (ms < 0) adverb = language.past;
+    }
+
     /** @type {string[]} */
     var renderedPieces = [];
     for (var i = 0; i < pieces.length; i++) {
       renderedPieces.push(renderPiece(pieces[i], language, options));
     }
 
+    var _result;
     if (!conjunction || pieces.length === 1) {
-      return renderedPieces.join(delimiter);
+      _result = renderedPieces.join(delimiter);
+    } else if (pieces.length === 2) {
+      _result = renderedPieces.join(conjunction);
+    } else {
+      _result =
+        renderedPieces.slice(0, -1).join(delimiter) +
+        (serialComma ? "," : "") +
+        conjunction +
+        renderedPieces.slice(-1);
     }
 
-    if (pieces.length === 2) {
-      return renderedPieces.join(conjunction);
-    }
+    if (adverb) _result = adverb.replace("%s", _result);
 
-    return (
-      renderedPieces.slice(0, -1).join(delimiter) +
-      (serialComma ? "," : "") +
-      conjunction +
-      renderedPieces.slice(-1)
-    );
+    return _result;
   }
 
   /**
@@ -1819,13 +1998,13 @@
       //
       // Has the nice side-effect of converting things to numbers. For example,
       // converts `"123"` and `Number(123)` to `123`.
-      ms = Math.abs(ms);
+      var absMs = Math.abs(ms);
 
       var options = assign({}, result, humanizerOptions || {});
 
-      var pieces = getPieces(ms, options);
+      var pieces = getPieces(absMs, options);
 
-      return formatPieces(pieces, options);
+      return formatPieces(pieces, options, ms);
     };
 
     return assign(
