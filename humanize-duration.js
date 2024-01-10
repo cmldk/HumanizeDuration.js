@@ -23,7 +23,7 @@
  */
 
 /**
- * @typedef {Record<"0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9", string>} DigitReplacements
+ * @typedef {[string, string, string, string, string, string, string, string, string, string]} DigitReplacements
  */
 
 /**
@@ -1721,12 +1721,18 @@
     return c % 10 === 1 && c % 100 !== 11;
   }
 
+  /**
+   * `Object.assign` for legacy environments. Difficult to make type-check.
+   *
+   * @param {...any} destination
+   */
   function assign(destination) {
     var source;
     for (var i = 1; i < arguments.length; i++) {
       source = arguments[i];
       for (var prop in source) {
         if (has(source, prop)) {
+          // @ts-ignore
           destination[prop] = source[prop];
         }
       }
@@ -1742,6 +1748,12 @@
       return Object.prototype.toString.call(arg) === "[object Array]";
     };
 
+  /**
+   * @template T
+   * @param {T} obj
+   * @param {keyof T} key
+   * @returns {boolean}
+   */
   function has(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
   }
@@ -1820,6 +1832,7 @@
         if (char === ".") {
           formattedCount += decimal;
         } else {
+          // @ts-ignore because `char` should always be 0-9 at this point.
           formattedCount += digitReplacements[char];
         }
       }
@@ -2022,8 +2035,15 @@
 
   /**
    * Create a humanizer, which lets you change the default options.
+   *
+   * @param {Options} [passedOptions]
    */
   function humanizer(passedOptions) {
+    /**
+     * @param {number} ms
+     * @param {Options} [humanizerOptions]
+     * @returns {string}
+     */
     var result = function humanizer(ms, humanizerOptions) {
       // Make sure we have a positive number.
       //
@@ -2069,19 +2089,18 @@
    *
    * This is a wrapper around the default humanizer.
    */
-  var humanizeDuration = humanizer({});
-
-  humanizeDuration.getSupportedLanguages = function getSupportedLanguages() {
-    var result = [];
-    for (var language in LANGUAGES) {
-      if (has(LANGUAGES, language) && language !== "gr") {
-        result.push(language);
+  var humanizeDuration = assign(humanizer({}), {
+    getSupportedLanguages: function getSupportedLanguages() {
+      var result = [];
+      for (var language in LANGUAGES) {
+        if (has(LANGUAGES, language) && language !== "gr") {
+          result.push(language);
+        }
       }
-    }
-    return result;
-  };
-
-  humanizeDuration.humanizer = humanizer;
+      return result;
+    },
+    humanizer: humanizer
+  });
 
   // @ts-ignore
   if (typeof define === "function" && define.amd) {
