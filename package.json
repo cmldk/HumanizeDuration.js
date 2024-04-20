@@ -32,9 +32,10 @@
     "Aryan Rawlani (https://github.com/aryanrawlani28)",
     "Kristijan Jesenski (https://github.com/kjesenski)",
     "Michal Karzel (https://github.com/Misioka)",
-    "Batmend Ganbaatar (https://github.com/theironbatka)"
+    "Batmend Ganbaatar (https://github.com/theironbatka)",
+    "Mikias Menjeta (https://github.com/OMikiasO)"
   ],
-  "version": "3.31.0",
+  "version": "3.32.0",
   "description": "Convert millisecond durations to English and many other languages.",
   "homepage": "https://github.com/EvanHahn/HumanizeDuration.js",
   "main": "humanize-duration.js",
@@ -47,12 +48,12 @@
   },
   "devDependencies": {
     "@types/ms": "^0.7.34",
-    "@types/node": "^20.10.6",
-    "csv-parse": "^5.5.3",
-    "eslint": "^8.56.0",
+    "@types/node": "^20.11.30",
+    "csv-parse": "^5.5.5",
+    "eslint": "^8.57.0",
     "ms": "^2.1.3",
-    "prettier": "^3.1.1",
-    "typescript": "^5.3.3"
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.3"
   },
   "keywords": [
     "humanize",

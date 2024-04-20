@@ -23,6 +23,7 @@
  */
 
 /**
+ * @internal
  * @typedef {[string, string, string, string, string, string, string, string, string, string]} DigitReplacements
  */
 
@@ -64,10 +65,35 @@
  */
 
 /**
+ * @internal
  * @typedef {Required<Options>} NormalizedOptions
  */
 
 (function () {
+  // Fallback for `Object.assign` if relevant.
+  var assign =
+    Object.assign ||
+    /** @param {...any} destination */
+    function (destination) {
+      var source;
+      for (var i = 1; i < arguments.length; i++) {
+        source = arguments[i];
+        for (var prop in source) {
+          if (has(source, prop)) {
+            destination[prop] = source[prop];
+          }
+        }
+      }
+      return destination;
+    };
+
+  // Fallback for `Array.isArray` if relevant.
+  var isArray =
+    Array.isArray ||
+    function (arg) {
+      return Object.prototype.toString.call(arg) === "[object Array]";
+    };
+
   // This has to be defined separately because of a bug: we want to alias
   // `gr` and `el` for backwards-compatiblity. In a breaking change, we can
   // remove `gr` entirely.
@@ -102,7 +128,10 @@
     ","
   );
 
-  /** @type {Record<string, Language>} */
+  /**
+   * @internal
+   * @type {Record<string, Language>}
+   */
   var LANGUAGES = {
     af: language(
       "jaar",
@@ -131,6 +160,7 @@
       "%s gelede",
       ","
     ),
+    am: language("ዓመት", "ወር", "ሳምንት", "ቀን", "ሰዓት", "ደቂቃ", "ሰከንድ", "ሚሊሰከንድ"),
     ar: assign(
       language(
         function (c) {
@@ -1578,6 +1608,7 @@
   /**
    * Helper function for creating language definitions.
    *
+   * @internal
    * @param {Unit} y
    * @param {Unit} mo
    * @param {Unit} w
@@ -1614,6 +1645,7 @@
   /**
    * Helper function for Arabic.
    *
+   * @internal
    * @param {number} c
    * @returns {0 | 1 | 2}
    */
@@ -1630,6 +1662,7 @@
   /**
    * Helper function for Polish.
    *
+   * @internal
    * @param {number} c
    * @returns {0 | 1 | 2 | 3}
    */
@@ -1649,6 +1682,7 @@
   /**
    * Helper function for Slavic languages.
    *
+   * @internal
    * @param {number} c
    * @returns {0 | 1 | 2 | 3}
    */
@@ -1675,6 +1709,7 @@
   /**
    * Helper function for Czech or Slovak.
    *
+   * @internal
    * @param {number} c
    * @returns {0 | 1 | 2 | 3}
    */
@@ -1694,6 +1729,7 @@
   /**
    * Helper function for Lithuanian.
    *
+   * @internal
    * @param {number} c
    * @returns {0 | 1 | 2}
    */
@@ -1714,6 +1750,7 @@
   /**
    * Helper function for Latvian.
    *
+   * @internal
    * @param {number} c
    * @returns {boolean}
    */
@@ -1722,33 +1759,7 @@
   }
 
   /**
-   * `Object.assign` for legacy environments. Difficult to make type-check.
-   *
-   * @param {...any} destination
-   */
-  function assign(destination) {
-    var source;
-    for (var i = 1; i < arguments.length; i++) {
-      source = arguments[i];
-      for (var prop in source) {
-        if (has(source, prop)) {
-          // @ts-ignore
-          destination[prop] = source[prop];
-        }
-      }
-    }
-    return destination;
-  }
-
-  // We need to make sure we support browsers that don't have
-  // `Array.isArray`, so we define a fallback here.
-  var isArray =
-    Array.isArray ||
-    function (arg) {
-      return Object.prototype.toString.call(arg) === "[object Array]";
-    };
-
-  /**
+   * @internal
    * @template T
    * @param {T} obj
    * @param {keyof T} key
@@ -1759,6 +1770,7 @@
   }
 
   /**
+   * @internal
    * @param {Pick<Required<Options>, "language" | "fallbacks" | "languages">} options
    * @throws {Error} Throws an error if language is not found.
    * @returns {Language}
@@ -1788,6 +1800,7 @@
   }
 
   /**
+   * @internal
    * @param {Piece} piece
    * @param {Language} language
    * @param {Pick<Required<Options>, "decimal" | "spacer" | "maxDecimalPoints" | "digitReplacements">} options
@@ -1855,12 +1868,14 @@
   }
 
   /**
+   * @internal
    * @typedef {Object} Piece
    * @prop {UnitName} unitName
    * @prop {number} unitCount
    */
 
   /**
+   * @internal
    * @param {number} ms
    * @param {Pick<Required<Options>, "units" | "unitMeasures" | "largest" | "round">} options
    * @returns {Piece[]}
@@ -1973,6 +1988,7 @@
   }
 
   /**
+   * @internal
    * @param {Piece[]} pieces
    * @param {Pick<Required<Options>, "units" | "language" | "languages" | "fallbacks" | "delimiter" | "spacer" | "decimal" | "conjunction" | "maxDecimalPoints" | "serialComma" | "digitReplacements" | "timeAdverb">} options
    * @returns {string}
