@@ -1,7 +1,5 @@
 # Humanize Duration
 
-[![npm version](https://badge.fury.io/js/humanize-duration.svg)](https://npmjs.org/package/humanize-duration)
-
 An extra time adverb has been added to the original package. It accepts negative durations. "-361000" becomes "6 minutes, 1 second ago".
 
 **timeAdverb**
