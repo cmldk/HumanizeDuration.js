@@ -1,3 +1,24 @@
+# 3.34.0 / 2026-06-29
+
+- new: Norwegian Nynorsk support (`nn`)
+- fix: Lithuanian now uses the singular form for counts such as 101 and 201 (for example "101 diena" instead of "101 dienų")
+
+# 3.33.2 / 2025-12-07
+
+- fix: Romanian now correctly uses "de" before nouns for numbers >= 20 such as "20 de minute" instead of "20 minute" (see [#235](https://github.com/EvanHahn/HumanizeDuration.js/pull/235))
+
+# 3.33.1 / 2025-09-15
+
+- change: shrink size slightly
+
+# 3.33.0 / 2025-06-05
+
+- new: Serbian Latin support (`sr_Latn`)
+
+# 3.32.2 / 2025-05-12
+
+- fix: use "週間" instead of "週" in Japanese (see [#230](https://github.com/EvanHahn/HumanizeDuration.js/pull/230))
+
 # 3.32.1 / 2024-05-25
 
 - fix: hide unit count if 2 in Arabic (see [#222](https://github.com/EvanHahn/HumanizeDuration.js/issues/222))

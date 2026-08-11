@@ -33,9 +33,10 @@
     "Kristijan Jesenski (https://github.com/kjesenski)",
     "Michal Karzel (https://github.com/Misioka)",
     "Batmend Ganbaatar (https://github.com/theironbatka)",
-    "Mikias Menjeta (https://github.com/OMikiasO)"
+    "Mikias Menjeta (https://github.com/OMikiasO)",
+    "Marko Plaznik (https://github.com/ohicee)"
   ],
-  "version": "3.32.1",
+  "version": "3.34.0",
   "description": "Convert millisecond durations to English and many other languages.",
   "main": "humanize-duration.js",
   "homepage": "https://github.com/EvanHahn/HumanizeDuration.js",
@@ -54,6 +55,6 @@
   "ignore": ["**/.*", "node_modules", "bower_components", "test", "tests"],
   "repository": {
     "type": "git",
-    "url": "git://github.com/EvanHahn/HumanizeDuration.js.git"
+    "url": "https://github.com/EvanHahn/HumanizeDuration.js.git"
   }
 }

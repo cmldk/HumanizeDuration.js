@@ -1,13 +1,11 @@
 // HumanizeDuration.js - https://git.io/j0HgmQ
 
-// @ts-check
-
 /**
  * @typedef {string | ((unitCount: number) => string)} Unit
  */
 
 /**
- * @typedef {("y" | "mo" | "w" | "d" | "h" | "m" | "s" | "ms")} UnitName
+ * @typedef {"y" | "mo" | "w" | "d" | "h" | "m" | "s" | "ms"} UnitName
  */
 
 /**
@@ -37,8 +35,8 @@
  * @prop {Unit} m
  * @prop {Unit} s
  * @prop {Unit} ms
- * @prop {string} future
- * @prop {string} past
+ * @prop {string} [future]
+ * @prop {string} [past]
  * @prop {string} [decimal]
  * @prop {string} [delimiter]
  * @prop {DigitReplacements} [_digitReplacements]
@@ -67,7 +65,11 @@
 
 /**
  * @internal
- * @typedef {Required<Options>} NormalizedOptions
+ * @typedef {Options & Required<Pick<Options, "language" | "languages" | "spacer" | "conjunction" | "serialComma" | "units" | "round" | "unitMeasures" | "timeAdverb">>} NormalizedOptions
+ */
+
+/**
+ * @typedef {((ms: number, humanizerOptions?: Options) => string) & NormalizedOptions} Humanizer
  */
 
 (function () {
@@ -81,7 +83,7 @@
         source = arguments[i];
         for (var prop in source) {
           if (has(source, prop)) {
-            destination[prop] = source[prop];
+            /** @type {any} */ (destination)[prop] = source[prop];
           }
         }
       }
@@ -99,33 +101,15 @@
   // `gr` and `el` for backwards-compatiblity. In a breaking change, we can
   // remove `gr` entirely.
   // See https://github.com/EvanHahn/HumanizeDuration.js/issues/143 for more.
-  var GREEK = language(
-    function (c) {
-      return c === 1 ? "χρόνος" : "χρόνια";
-    },
-    function (c) {
-      return c === 1 ? "μήνας" : "μήνες";
-    },
-    function (c) {
-      return c === 1 ? "εβδομάδα" : "εβδομάδες";
-    },
-    function (c) {
-      return c === 1 ? "μέρα" : "μέρες";
-    },
-    function (c) {
-      return c === 1 ? "ώρα" : "ώρες";
-    },
-    function (c) {
-      return c === 1 ? "λεπτό" : "λεπτά";
-    },
-    function (c) {
-      return c === 1 ? "δευτερόλεπτο" : "δευτερόλεπτα";
-    },
-    function (c) {
-      return (c === 1 ? "χιλιοστό" : "χιλιοστά") + " του δευτερολέπτου";
-    },
-    "σε %s",
-    "%s πριν",
+  var GREEK = onesLanguage(
+    ["χρόνος", "χρόνια"],
+    ["μήνας", "μήνες"],
+    ["εβδομάδα", "εβδομάδες"],
+    ["μέρα", "μέρες"],
+    ["ώρα", "ώρες"],
+    ["λεπτό", "λεπτά"],
+    ["δευτερόλεπτο", "δευτερόλεπτα"],
+    ["χιλιοστό του δευτερολέπτου", "χιλιοστά του δευτερολέπτου"],
     ","
   );
 
@@ -134,31 +118,15 @@
    * @type {Record<string, Language>}
    */
   var LANGUAGES = {
-    af: language(
-      "jaar",
-      function (c) {
-        return "maand" + (c === 1 ? "" : "e");
-      },
-      function (c) {
-        return c === 1 ? "week" : "weke";
-      },
-      function (c) {
-        return c === 1 ? "dag" : "dae";
-      },
-      function (c) {
-        return c === 1 ? "uur" : "ure";
-      },
-      function (c) {
-        return c === 1 ? "minuut" : "minute";
-      },
-      function (c) {
-        return "sekonde" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "millisekonde" + (c === 1 ? "" : "s");
-      },
-      "oor %s",
-      "%s gelede",
+    af: onesLanguage(
+      ["jaar", "jaar"],
+      ["maand", "maande"],
+      ["week", "weke"],
+      ["dag", "dae"],
+      ["uur", "ure"],
+      ["minuut", "minute"],
+      ["sekonde", "sekondes"],
+      ["millisekonde", "millisekondes"],
       ","
     ),
     am: language("ዓመት", "ወር", "ሳምንት", "ቀን", "ሰዓት", "ደቂቃ", "ሰከንድ", "ሚሊሰከንድ"),
@@ -190,8 +158,6 @@
             getArabicForm(c)
           ];
         },
-        "بعد %s",
-        "منذ %s",
         ","
       ),
       {
@@ -200,34 +166,15 @@
         _digitReplacements: ["۰", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"]
       }
     ),
-    bg: language(
-      function (c) {
-        return ["години", "година", "години"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["месеца", "месец", "месеца"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["седмици", "седмица", "седмици"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["дни", "ден", "дни"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["часа", "час", "часа"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["минути", "минута", "минути"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["секунди", "секунда", "секунди"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["милисекунди", "милисекунда", "милисекунди"][getSlavicForm(c)];
-      },
-      "след %s",
-      "преди %s",
-      ","
+    bg: slavicLanguage(
+      ["години", "година", "години"],
+      ["месеца", "месец", "месеца"],
+      ["седмици", "седмица", "седмици"],
+      ["дни", "ден", "дни"],
+      ["часа", "час", "часа"],
+      ["минути", "минута", "минути"],
+      ["секунди", "секунда", "секунди"],
+      ["милисекунди", "милисекунда", "милисекунди"]
     ),
     bn: language(
       "বছর",
@@ -237,37 +184,17 @@
       "ঘন্টা",
       "মিনিট",
       "সেকেন্ড",
-      "মিলিসেকেন্ড",
-      "%s পরে",
-      "%s আগে"
+      "মিলিসেকেন্ড"
     ),
-    ca: language(
-      function (c) {
-        return "any" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "mes" + (c === 1 ? "" : "os");
-      },
-      function (c) {
-        return "setman" + (c === 1 ? "a" : "es");
-      },
-      function (c) {
-        return "di" + (c === 1 ? "a" : "es");
-      },
-      function (c) {
-        return "hor" + (c === 1 ? "a" : "es");
-      },
-      function (c) {
-        return "minut" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "segon" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "milisegon" + (c === 1 ? "" : "s");
-      },
-      "d'aquí %s",
-      "fa %s",
+    ca: onesLanguage(
+      ["any", "anys"],
+      ["mes", "mesos"],
+      ["setmana", "setmanes"],
+      ["dia", "dies"],
+      ["hora", "hores"],
+      ["minut", "minuts"],
+      ["segon", "segons"],
+      ["milisegon", "milisegons"],
       ","
     ),
     ckb: language(
@@ -310,8 +237,6 @@
           getCzechOrSlovakForm(c)
         ];
       },
-      "za %s",
-      "před %s",
       ","
     ),
     cy: language(
@@ -322,180 +247,72 @@
       "awr",
       "munud",
       "eiliad",
-      "milieiliad",
-      "mewn %s",
-      "%s yn ôl"
+      "milieiliad"
     ),
-    da: language(
-      "år",
-      function (c) {
-        return "måned" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "uge" + (c === 1 ? "" : "r");
-      },
-      function (c) {
-        return "dag" + (c === 1 ? "" : "e");
-      },
-      function (c) {
-        return "time" + (c === 1 ? "" : "r");
-      },
-      function (c) {
-        return "minut" + (c === 1 ? "" : "ter");
-      },
-      function (c) {
-        return "sekund" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "millisekund" + (c === 1 ? "" : "er");
-      },
-      "om %s",
-      "%s siden",
+    da: onesLanguage(
+      ["år", "år"],
+      ["måned", "måneder"],
+      ["uge", "uger"],
+      ["dag", "dage"],
+      ["time", "timer"],
+      ["minut", "minutter"],
+      ["sekund", "sekunder"],
+      ["millisekund", "millisekunder"],
       ","
     ),
-    de: language(
-      function (c) {
-        return "Jahr" + (c === 1 ? "" : "e");
-      },
-      function (c) {
-        return "Monat" + (c === 1 ? "" : "e");
-      },
-      function (c) {
-        return "Woche" + (c === 1 ? "" : "n");
-      },
-      function (c) {
-        return "Tag" + (c === 1 ? "" : "e");
-      },
-      function (c) {
-        return "Stunde" + (c === 1 ? "" : "n");
-      },
-      function (c) {
-        return "Minute" + (c === 1 ? "" : "n");
-      },
-      function (c) {
-        return "Sekunde" + (c === 1 ? "" : "n");
-      },
-      function (c) {
-        return "Millisekunde" + (c === 1 ? "" : "n");
-      },
-      "in %s",
-      "vor %s",
+    de: onesLanguage(
+      ["Jahr", "Jahre"],
+      ["Monat", "Monate"],
+      ["Woche", "Wochen"],
+      ["Tag", "Tage"],
+      ["Stunde", "Stunden"],
+      ["Minute", "Minuten"],
+      ["Sekunde", "Sekunden"],
+      ["Millisekunde", "Millisekunden"],
       ","
     ),
     el: GREEK,
-    en: language(
-      function (c) {
-        return "year" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "month" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "week" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "day" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "hour" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "minute" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "second" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "millisecond" + (c === 1 ? "" : "s");
-      },
-      "in %s",
-      "%s ago"
+    en: onesLanguage(
+      ["year", "years"],
+      ["month", "months"],
+      ["week", "weeks"],
+      ["day", "days"],
+      ["hour", "hours"],
+      ["minute", "minutes"],
+      ["second", "seconds"],
+      ["millisecond", "milliseconds"]
     ),
-    eo: language(
-      function (c) {
-        return "jaro" + (c === 1 ? "" : "j");
-      },
-      function (c) {
-        return "monato" + (c === 1 ? "" : "j");
-      },
-      function (c) {
-        return "semajno" + (c === 1 ? "" : "j");
-      },
-      function (c) {
-        return "tago" + (c === 1 ? "" : "j");
-      },
-      function (c) {
-        return "horo" + (c === 1 ? "" : "j");
-      },
-      function (c) {
-        return "minuto" + (c === 1 ? "" : "j");
-      },
-      function (c) {
-        return "sekundo" + (c === 1 ? "" : "j");
-      },
-      function (c) {
-        return "milisekundo" + (c === 1 ? "" : "j");
-      },
-      "post %s",
-      "antaŭ %s",
+    eo: onesLanguage(
+      ["jaro", "jaroj"],
+      ["monato", "monatoj"],
+      ["semajno", "semajnoj"],
+      ["tago", "tagoj"],
+      ["horo", "horoj"],
+      ["minuto", "minutoj"],
+      ["sekundo", "sekundoj"],
+      ["milisekundo", "milisekundoj"],
       ","
     ),
-    es: language(
-      function (c) {
-        return "año" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "mes" + (c === 1 ? "" : "es");
-      },
-      function (c) {
-        return "semana" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "día" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "hora" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "minuto" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "segundo" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "milisegundo" + (c === 1 ? "" : "s");
-      },
-      "en %s",
-      "hace %s",
+    es: onesLanguage(
+      ["año", "años"],
+      ["mes", "meses"],
+      ["semana", "semanas"],
+      ["día", "días"],
+      ["hora", "horas"],
+      ["minuto", "minutos"],
+      ["segundo", "segundos"],
+      ["milisegundo", "milisegundos"],
       ","
     ),
-    et: language(
-      function (c) {
-        return "aasta" + (c === 1 ? "" : "t");
-      },
-      function (c) {
-        return "kuu" + (c === 1 ? "" : "d");
-      },
-      function (c) {
-        return "nädal" + (c === 1 ? "" : "at");
-      },
-      function (c) {
-        return "päev" + (c === 1 ? "" : "a");
-      },
-      function (c) {
-        return "tund" + (c === 1 ? "" : "i");
-      },
-      function (c) {
-        return "minut" + (c === 1 ? "" : "it");
-      },
-      function (c) {
-        return "sekund" + (c === 1 ? "" : "it");
-      },
-      function (c) {
-        return "millisekund" + (c === 1 ? "" : "it");
-      },
-      "%s pärast",
-      "%s tagasi",
+    et: onesLanguage(
+      ["aasta", "aastat"],
+      ["kuu", "kuud"],
+      ["nädal", "nädalat"],
+      ["päev", "päeva"],
+      ["tund", "tundi"],
+      ["minut", "minutit"],
+      ["sekund", "sekundit"],
+      ["millisekund", "millisekundit"],
       ","
     ),
     eu: language(
@@ -507,8 +324,6 @@
       "minutu",
       "segundo",
       "milisegundo",
-      "%s barru",
-      "duela %s",
       ","
     ),
     fa: language(
@@ -519,60 +334,28 @@
       "ساعت",
       "دقیقه",
       "ثانیه",
-      "میلی ثانیه",
-      "در %s",
-      "%s پیش"
+      "میلی ثانیه"
     ),
-    fi: language(
-      function (c) {
-        return c === 1 ? "vuosi" : "vuotta";
-      },
-      function (c) {
-        return c === 1 ? "kuukausi" : "kuukautta";
-      },
-      function (c) {
-        return "viikko" + (c === 1 ? "" : "a");
-      },
-      function (c) {
-        return "päivä" + (c === 1 ? "" : "ä");
-      },
-      function (c) {
-        return "tunti" + (c === 1 ? "" : "a");
-      },
-      function (c) {
-        return "minuutti" + (c === 1 ? "" : "a");
-      },
-      function (c) {
-        return "sekunti" + (c === 1 ? "" : "a");
-      },
-      function (c) {
-        return "millisekunti" + (c === 1 ? "" : "a");
-      },
-      "%s päästä",
-      "%s sitten",
+    fi: onesLanguage(
+      ["vuosi", "vuotta"],
+      ["kuukausi", "kuukautta"],
+      ["viikko", "viikkoa"],
+      ["päivä", "päivää"],
+      ["tunti", "tuntia"],
+      ["minuutti", "minuuttia"],
+      ["sekunti", "sekuntia"],
+      ["millisekunti", "millisekuntia"],
       ","
     ),
-    fo: language(
-      "ár",
-      function (c) {
-        return c === 1 ? "mánaður" : "mánaðir";
-      },
-      function (c) {
-        return c === 1 ? "vika" : "vikur";
-      },
-      function (c) {
-        return c === 1 ? "dagur" : "dagar";
-      },
-      function (c) {
-        return c === 1 ? "tími" : "tímar";
-      },
-      function (c) {
-        return c === 1 ? "minuttur" : "minuttir";
-      },
-      "sekund",
-      "millisekund",
-      "um %s",
-      "%s síðani",
+    fo: onesLanguage(
+      ["ár", "ár"],
+      ["mánaður", "mánaðir"],
+      ["vika", "vikur"],
+      ["dagur", "dagar"],
+      ["tími", "tímar"],
+      ["minuttur", "minuttir"],
+      ["sekund", "sekund"],
+      ["millisekund", "millisekund"],
       ","
     ),
     fr: language(
@@ -598,38 +381,18 @@
       function (c) {
         return "milliseconde" + (c >= 2 ? "s" : "");
       },
-      "dans %s",
-      "il y a %s",
       ","
     ),
     gr: GREEK,
-    he: language(
-      function (c) {
-        return c === 1 ? "שנה" : "שנים";
-      },
-      function (c) {
-        return c === 1 ? "חודש" : "חודשים";
-      },
-      function (c) {
-        return c === 1 ? "שבוע" : "שבועות";
-      },
-      function (c) {
-        return c === 1 ? "יום" : "ימים";
-      },
-      function (c) {
-        return c === 1 ? "שעה" : "שעות";
-      },
-      function (c) {
-        return c === 1 ? "דקה" : "דקות";
-      },
-      function (c) {
-        return c === 1 ? "שניה" : "שניות";
-      },
-      function (c) {
-        return c === 1 ? "מילישנייה" : "מילישניות";
-      },
-      "בעוד %s",
-      "לפני %s"
+    he: onesLanguage(
+      ["שנה", "שנים"],
+      ["חודש", "חודשים"],
+      ["שבוע", "שבועות"],
+      ["יום", "ימים"],
+      ["שעה", "שעות"],
+      ["דקה", "דקות"],
+      ["שניה", "שניות"],
+      ["מילישנייה", "מילישניות"]
     ),
     hr: language(
       function (c) {
@@ -652,9 +415,7 @@
         }
         return "tjedna";
       },
-      function (c) {
-        return c === 1 ? "dan" : "dana";
-      },
+      onesUnit(["dan", "dana"]),
       function (c) {
         if (c === 1) {
           return "sat";
@@ -689,27 +450,17 @@
         }
         return "milisekundi";
       },
-      "za %s",
-      "prije %s",
       ","
     ),
     hi: language(
       "साल",
-      function (c) {
-        return c === 1 ? "महीना" : "महीने";
-      },
-      function (c) {
-        return c === 1 ? "हफ़्ता" : "हफ्ते";
-      },
+      onesUnit(["महीना", "महीने"]),
+      onesUnit(["हफ़्ता", "हफ्ते"]),
       "दिन",
-      function (c) {
-        return c === 1 ? "घंटा" : "घंटे";
-      },
+      onesUnit(["घंटा", "घंटे"]),
       "मिनट",
       "सेकंड",
-      "मिलीसेकंड",
-      "%s में",
-      "%s पहले"
+      "मिलीसेकंड"
     ),
     hu: language(
       "év",
@@ -720,8 +471,6 @@
       "perc",
       "másodperc",
       "ezredmásodperc",
-      "%s múlva",
-      "%s",
       ","
     ),
     id: language(
@@ -732,77 +481,30 @@
       "jam",
       "menit",
       "detik",
-      "milidetik",
-      "dalam %s",
-      "%s yang lalu"
+      "milidetik"
     ),
-    is: language(
-      "ár",
-      function (c) {
-        return "mánuð" + (c === 1 ? "ur" : "ir");
-      },
-      function (c) {
-        return "vik" + (c === 1 ? "a" : "ur");
-      },
-      function (c) {
-        return "dag" + (c === 1 ? "ur" : "ar");
-      },
-      function (c) {
-        return "klukkutím" + (c === 1 ? "i" : "ar");
-      },
-      function (c) {
-        return "mínút" + (c === 1 ? "a" : "ur");
-      },
-      function (c) {
-        return "sekúnd" + (c === 1 ? "a" : "ur");
-      },
-      function (c) {
-        return "millisekúnd" + (c === 1 ? "a" : "ur");
-      },
-      "eftir %s",
-      "fyrir %s síðan"
+    is: onesLanguage(
+      ["ár", "ár"],
+      ["mánuður", "mánuðir"],
+      ["vika", "vikur"],
+      ["dagur", "dagar"],
+      ["klukkutími", "klukkutímar"],
+      ["mínúta", "mínútur"],
+      ["sekúnda", "sekúndur"],
+      ["millisekúnda", "millisekúndur"]
     ),
-    it: language(
-      function (c) {
-        return "ann" + (c === 1 ? "o" : "i");
-      },
-      function (c) {
-        return "mes" + (c === 1 ? "e" : "i");
-      },
-      function (c) {
-        return "settiman" + (c === 1 ? "a" : "e");
-      },
-      function (c) {
-        return "giorn" + (c === 1 ? "o" : "i");
-      },
-      function (c) {
-        return "or" + (c === 1 ? "a" : "e");
-      },
-      function (c) {
-        return "minut" + (c === 1 ? "o" : "i");
-      },
-      function (c) {
-        return "second" + (c === 1 ? "o" : "i");
-      },
-      function (c) {
-        return "millisecond" + (c === 1 ? "o" : "i");
-      },
-      "tra %s",
-      "%s fa",
+    it: onesLanguage(
+      ["anno", "anni"],
+      ["mese", "mesi"],
+      ["settimana", "settimane"],
+      ["giorno", "giorni"],
+      ["ora", "ore"],
+      ["minuto", "minuti"],
+      ["secondo", "secondi"],
+      ["millisecondo", "millisecondi"],
       ","
     ),
-    ja: language(
-      "年",
-      "ヶ月",
-      "週",
-      "日",
-      "時間",
-      "分",
-      "秒",
-      "ミリ秒",
-      "%s後",
-      "%s前"
-    ),
+    ja: language("年", "ヶ月", "週間", "日", "時間", "分", "秒", "ミリ秒"),
     km: language(
       "ឆ្នាំ",
       "ខែ",
@@ -811,50 +513,19 @@
       "ម៉ោង",
       "នាទី",
       "វិនាទី",
-      "មិល្លីវិនាទី",
-      "%sទៀត",
-      "%sមុន"
+      "មិល្លីវិនាទី"
     ),
-    kn: language(
-      function (c) {
-        return c === 1 ? "ವರ್ಷ" : "ವರ್ಷಗಳು";
-      },
-      function (c) {
-        return c === 1 ? "ತಿಂಗಳು" : "ತಿಂಗಳುಗಳು";
-      },
-      function (c) {
-        return c === 1 ? "ವಾರ" : "ವಾರಗಳು";
-      },
-      function (c) {
-        return c === 1 ? "ದಿನ" : "ದಿನಗಳು";
-      },
-      function (c) {
-        return c === 1 ? "ಗಂಟೆ" : "ಗಂಟೆಗಳು";
-      },
-      function (c) {
-        return c === 1 ? "ನಿಮಿಷ" : "ನಿಮಿಷಗಳು";
-      },
-      function (c) {
-        return c === 1 ? "ಸೆಕೆಂಡ್" : "ಸೆಕೆಂಡುಗಳು";
-      },
-      function (c) {
-        return c === 1 ? "ಮಿಲಿಸೆಕೆಂಡ್" : "ಮಿಲಿಸೆಕೆಂಡುಗಳು";
-      },
-      "%s ನಂತರ",
-      "%s ಹಿಂದೆ"
+    kn: onesLanguage(
+      ["ವರ್ಷ", "ವರ್ಷಗಳು"],
+      ["ತಿಂಗಳು", "ತಿಂಗಳುಗಳು"],
+      ["ವಾರ", "ವಾರಗಳು"],
+      ["ದಿನ", "ದಿನಗಳು"],
+      ["ಗಂಟೆ", "ಗಂಟೆಗಳು"],
+      ["ನಿಮಿಷ", "ನಿಮಿಷಗಳು"],
+      ["ಸೆಕೆಂಡ್", "ಸೆಕೆಂಡುಗಳು"],
+      ["ಮಿಲಿಸೆಕೆಂಡ್", "ಮಿಲಿಸೆಕೆಂಡುಗಳು"]
     ),
-    ko: language(
-      "년",
-      "개월",
-      "주일",
-      "일",
-      "시간",
-      "분",
-      "초",
-      "밀리 초",
-      "%s 후",
-      "%s 전"
-    ),
+    ko: language("년", "개월", "주일", "일", "시간", "분", "초", "밀리 초"),
     ku: language(
       "sal",
       "meh",
@@ -864,8 +535,6 @@
       "deqe",
       "saniye",
       "mîlîçirk",
-      "له‌ %s",
-      "%s",
       ","
     ),
     lo: language(
@@ -877,8 +546,6 @@
       "ນາທີ",
       "ວິນາທີ",
       "ມິນລິວິນາທີ",
-      "ອີກ %s",
-      "%sຜ່ານມາ",
       ","
     ),
     lt: language(
@@ -910,8 +577,6 @@
           getLithuanianForm(c)
         ];
       },
-      "po %s",
-      "prieš %s",
       ","
     ),
     lv: language(
@@ -939,37 +604,17 @@
       function (c) {
         return getLatvianForm(c) ? "milisekunde" : "milisekundes";
       },
-      "pēc %s",
-      "pirms %s",
       ","
     ),
-    mk: language(
-      function (c) {
-        return c === 1 ? "година" : "години";
-      },
-      function (c) {
-        return c === 1 ? "месец" : "месеци";
-      },
-      function (c) {
-        return c === 1 ? "недела" : "недели";
-      },
-      function (c) {
-        return c === 1 ? "ден" : "дена";
-      },
-      function (c) {
-        return c === 1 ? "час" : "часа";
-      },
-      function (c) {
-        return c === 1 ? "минута" : "минути";
-      },
-      function (c) {
-        return c === 1 ? "секунда" : "секунди";
-      },
-      function (c) {
-        return c === 1 ? "милисекунда" : "милисекунди";
-      },
-      "за %s",
-      "пред %s",
+    mk: onesLanguage(
+      ["година", "години"],
+      ["месец", "месеци"],
+      ["недела", "недели"],
+      ["ден", "дена"],
+      ["час", "часа"],
+      ["минута", "минути"],
+      ["секунда", "секунди"],
+      ["милисекунда", "милисекунди"],
       ","
     ),
     mn: language(
@@ -980,29 +625,17 @@
       "цаг",
       "минут",
       "секунд",
-      "миллисекунд",
-      "%s дараа",
-      "%s өмнө"
+      "миллисекунд"
     ),
     mr: language(
-      function (c) {
-        return c === 1 ? "वर्ष" : "वर्षे";
-      },
-      function (c) {
-        return c === 1 ? "महिना" : "महिने";
-      },
-      function (c) {
-        return c === 1 ? "आठवडा" : "आठवडे";
-      },
+      onesUnit(["वर्ष", "वर्षे"]),
+      onesUnit(["महिना", "महिने"]),
+      onesUnit(["आठवडा", "आठवडे"]),
       "दिवस",
       "तास",
-      function (c) {
-        return c === 1 ? "मिनिट" : "मिनिटे";
-      },
+      onesUnit(["मिनिट", "मिनिटे"]),
       "सेकंद",
-      "मिलिसेकंद",
-      "%sमध्ये",
-      "%sपूर्वी"
+      "मिलिसेकंद"
     ),
     ms: language(
       "tahun",
@@ -1012,60 +645,39 @@
       "jam",
       "minit",
       "saat",
-      "milisaat",
-      "dalam %s",
-      "%s yang lepas"
+      "milisaat"
     ),
-    nl: language(
-      "jaar",
-      function (c) {
-        return c === 1 ? "maand" : "maanden";
-      },
-      function (c) {
-        return c === 1 ? "week" : "weken";
-      },
-      function (c) {
-        return c === 1 ? "dag" : "dagen";
-      },
-      "uur",
-      function (c) {
-        return c === 1 ? "minuut" : "minuten";
-      },
-      function (c) {
-        return c === 1 ? "seconde" : "seconden";
-      },
-      function (c) {
-        return c === 1 ? "milliseconde" : "milliseconden";
-      },
-      "over %s",
-      "%s geleden",
+    nl: onesLanguage(
+      ["jaar", "jaar"],
+      ["maand", "maanden"],
+      ["week", "weken"],
+      ["dag", "dagen"],
+      ["uur", "uur"],
+      ["minuut", "minuten"],
+      ["seconde", "seconden"],
+      ["milliseconde", "milliseconden"],
       ","
     ),
-    no: language(
-      "år",
-      function (c) {
-        return "måned" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "uke" + (c === 1 ? "" : "r");
-      },
-      function (c) {
-        return "dag" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "time" + (c === 1 ? "" : "r");
-      },
-      function (c) {
-        return "minutt" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "sekund" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "millisekund" + (c === 1 ? "" : "er");
-      },
-      "om %s",
-      "%s siden",
+    nn: onesLanguage(
+      ["år", "år"],
+      ["månad", "månader"],
+      ["veke", "veker"],
+      ["dag", "dagar"],
+      ["time", "timar"],
+      ["minutt", "minutt"],
+      ["sekund", "sekund"],
+      ["millisekund", "millisekund"],
+      ","
+    ),
+    no: onesLanguage(
+      ["år", "år"],
+      ["måned", "måneder"],
+      ["uke", "uker"],
+      ["dag", "dager"],
+      ["time", "timer"],
+      ["minutt", "minutter"],
+      ["sekund", "sekunder"],
+      ["millisekund", "millisekunder"],
       ","
     ),
     pl: language(
@@ -1097,103 +709,42 @@
           getPolishForm(c)
         ];
       },
-      "za %s",
-      "%s temu",
       ","
     ),
-    pt: language(
-      function (c) {
-        return "ano" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return c === 1 ? "mês" : "meses";
-      },
-      function (c) {
-        return "semana" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "dia" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "hora" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "minuto" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "segundo" + (c === 1 ? "" : "s");
-      },
-      function (c) {
-        return "milissegundo" + (c === 1 ? "" : "s");
-      },
-      "em %s",
-      "há %s",
+    pt: onesLanguage(
+      ["ano", "anos"],
+      ["mês", "meses"],
+      ["semana", "semanas"],
+      ["dia", "dias"],
+      ["hora", "horas"],
+      ["minuto", "minutos"],
+      ["segundo", "segundos"],
+      ["milissegundo", "milissegundos"],
       ","
     ),
     ro: language(
-      function (c) {
-        return c === 1 ? "an" : "ani";
-      },
-      function (c) {
-        return c === 1 ? "lună" : "luni";
-      },
-      function (c) {
-        return c === 1 ? "săptămână" : "săptămâni";
-      },
-      function (c) {
-        return c === 1 ? "zi" : "zile";
-      },
-      function (c) {
-        return c === 1 ? "oră" : "ore";
-      },
-      function (c) {
-        return c === 1 ? "minut" : "minute";
-      },
-      function (c) {
-        return c === 1 ? "secundă" : "secunde";
-      },
-      function (c) {
-        return c === 1 ? "milisecundă" : "milisecunde";
-      },
-      "peste %s",
-      "%s în urmă",
+      romanianUnit("an", "ani", "de ani"),
+      romanianUnit("lună", "luni", "de luni"),
+      romanianUnit("săptămână", "săptămâni", "de săptămâni"),
+      romanianUnit("zi", "zile", "de zile"),
+      romanianUnit("oră", "ore", "de ore"),
+      romanianUnit("minut", "minute", "de minute"),
+      romanianUnit("secundă", "secunde", "de secunde"),
+      romanianUnit("milisecundă", "milisecunde", "de milisecunde"),
       ","
     ),
-    ru: language(
-      function (c) {
-        return ["лет", "год", "года"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["месяцев", "месяц", "месяца"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["недель", "неделя", "недели"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["дней", "день", "дня"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["часов", "час", "часа"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["минут", "минута", "минуты"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["секунд", "секунда", "секунды"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["миллисекунд", "миллисекунда", "миллисекунды"][
-          getSlavicForm(c)
-        ];
-      },
-      "через %s",
-      "%s назад",
-      ","
+    ru: slavicLanguage(
+      ["лет", "год", "года"],
+      ["месяцев", "месяц", "месяца"],
+      ["недель", "неделя", "недели"],
+      ["дней", "день", "дня"],
+      ["часов", "час", "часа"],
+      ["минут", "минута", "минуты"],
+      ["секунд", "секунда", "секунды"],
+      ["миллисекунд", "миллисекунда", "миллисекунды"]
     ),
     sq: language(
-      function (c) {
-        return c === 1 ? "vit" : "vjet";
-      },
+      onesUnit(["vit", "vjet"]),
       "muaj",
       "javë",
       "ditë",
@@ -1207,141 +758,67 @@
       function (c) {
         return "milisekond" + (c === 1 ? "ë" : "a");
       },
-      "në %s",
-      "%s më parë",
       ","
     ),
-    sr: language(
-      function (c) {
-        return ["години", "година", "године"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["месеци", "месец", "месеца"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["недељи", "недеља", "недеље"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["дани", "дан", "дана"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["сати", "сат", "сата"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["минута", "минут", "минута"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["секунди", "секунда", "секунде"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["милисекунди", "милисекунда", "милисекунде"][getSlavicForm(c)];
-      },
-      "за %s",
-      "пре %s",
-      ","
+    sr: slavicLanguage(
+      ["години", "година", "године"],
+      ["месеци", "месец", "месеца"],
+      ["недељи", "недеља", "недеље"],
+      ["дани", "дан", "дана"],
+      ["сати", "сат", "сата"],
+      ["минута", "минут", "минута"],
+      ["секунди", "секунда", "секунде"],
+      ["милисекунди", "милисекунда", "милисекунде"]
     ),
-    ta: language(
-      function (c) {
-        return c === 1 ? "வருடம்" : "ஆண்டுகள்";
-      },
-      function (c) {
-        return c === 1 ? "மாதம்" : "மாதங்கள்";
-      },
-      function (c) {
-        return c === 1 ? "வாரம்" : "வாரங்கள்";
-      },
-      function (c) {
-        return c === 1 ? "நாள்" : "நாட்கள்";
-      },
-      function (c) {
-        return c === 1 ? "மணி" : "மணிநேரம்";
-      },
-      function (c) {
-        return "நிமிட" + (c === 1 ? "ம்" : "ங்கள்");
-      },
-      function (c) {
-        return "வினாடி" + (c === 1 ? "" : "கள்");
-      },
-      function (c) {
-        return "மில்லி விநாடி" + (c === 1 ? "" : "கள்");
-      },
-      "%s இல்",
-      "%s முன்"
+    sr_Latn: slavicLanguage(
+      ["godini", "godina", "godine"],
+      ["meseci", "mesec", "meseca"],
+      ["nedelji", "nedelja", "nedelje"],
+      ["dani", "dan", "dana"],
+      ["sati", "sat", "sata"],
+      ["minuta", "minut", "minuta"],
+      ["sekundi", "sekunda", "sekunde"],
+      ["milisekundi", "milisekunda", "milisekunde"]
     ),
-    te: language(
-      function (c) {
-        return "సంవత్స" + (c === 1 ? "రం" : "రాల");
-      },
-      function (c) {
-        return "నెల" + (c === 1 ? "" : "ల");
-      },
-      function (c) {
-        return c === 1 ? "వారం" : "వారాలు";
-      },
-      function (c) {
-        return "రోజు" + (c === 1 ? "" : "లు");
-      },
-      function (c) {
-        return "గంట" + (c === 1 ? "" : "లు");
-      },
-      function (c) {
-        return c === 1 ? "నిమిషం" : "నిమిషాలు";
-      },
-      function (c) {
-        return c === 1 ? "సెకను" : "సెకన్లు";
-      },
-      function (c) {
-        return c === 1 ? "మిల్లీసెకన్" : "మిల్లీసెకన్లు";
-      },
-      "%s లో",
-      "%s క్రితం"
+    ta: onesLanguage(
+      ["வருடம்", "ஆண்டுகள்"],
+      ["மாதம்", "மாதங்கள்"],
+      ["வாரம்", "வாரங்கள்"],
+      ["நாள்", "நாட்கள்"],
+      ["மணி", "மணிநேரம்"],
+      ["நிமிடம்", "நிமிடங்கள்"],
+      ["வினாடி", "வினாடிகள்"],
+      ["மில்லி விநாடி", "மில்லி விநாடிகள்"]
     ),
-    uk: language(
-      function (c) {
-        return ["років", "рік", "роки"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["місяців", "місяць", "місяці"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["тижнів", "тиждень", "тижні"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["днів", "день", "дні"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["годин", "година", "години"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["хвилин", "хвилина", "хвилини"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["секунд", "секунда", "секунди"][getSlavicForm(c)];
-      },
-      function (c) {
-        return ["мілісекунд", "мілісекунда", "мілісекунди"][getSlavicForm(c)];
-      },
-      "за %s",
-      "%s тому",
-      ","
+    te: onesLanguage(
+      ["సంవత్సరం", "సంవత్సరాల"],
+      ["నెల", "నెలల"],
+      ["వారం", "వారాలు"],
+      ["రోజు", "రోజులు"],
+      ["గంట", "గంటలు"],
+      ["నిమిషం", "నిమిషాలు"],
+      ["సెకను", "సెకన్లు"],
+      ["మిల్లీసెకన్", "మిల్లీసెకన్లు"]
+    ),
+    uk: slavicLanguage(
+      ["років", "рік", "роки"],
+      ["місяців", "місяць", "місяці"],
+      ["тижнів", "тиждень", "тижні"],
+      ["днів", "день", "дні"],
+      ["годин", "година", "години"],
+      ["хвилин", "хвилина", "хвилини"],
+      ["секунд", "секунда", "секунди"],
+      ["мілісекунд", "мілісекунда", "мілісекунди"]
     ),
     ur: language(
       "سال",
-      function (c) {
-        return c === 1 ? "مہینہ" : "مہینے";
-      },
-      function (c) {
-        return c === 1 ? "ہفتہ" : "ہفتے";
-      },
+      onesUnit(["مہینہ", "مہینے"]),
+      onesUnit(["ہفتہ", "ہفتے"]),
       "دن",
-      function (c) {
-        return c === 1 ? "گھنٹہ" : "گھنٹے";
-      },
+      onesUnit(["گھنٹہ", "گھنٹے"]),
       "منٹ",
       "سیکنڈ",
-      "ملی سیکنڈ",
-      "%s بعد",
-      "%s قبل"
+      "ملی سیکنڈ"
     ),
     sk: language(
       function (c) {
@@ -1376,8 +853,6 @@
           getCzechOrSlovakForm(c)
         ];
       },
-      "za %s",
-      "pred %s",
       ","
     ),
     sl: language(
@@ -1469,57 +944,29 @@
           return "milisekund";
         }
       },
-      "čez %s",
-      "pred %s",
       ","
     ),
-    sv: language(
-      "år",
-      function (c) {
-        return "månad" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "veck" + (c === 1 ? "a" : "or");
-      },
-      function (c) {
-        return "dag" + (c === 1 ? "" : "ar");
-      },
-      function (c) {
-        return "timm" + (c === 1 ? "e" : "ar");
-      },
-      function (c) {
-        return "minut" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "sekund" + (c === 1 ? "" : "er");
-      },
-      function (c) {
-        return "millisekund" + (c === 1 ? "" : "er");
-      },
-      "om %s",
-      "för %s sedan",
+    sv: onesLanguage(
+      ["år", "år"],
+      ["månad", "månader"],
+      ["vecka", "veckor"],
+      ["dag", "dagar"],
+      ["timme", "timmar"],
+      ["minut", "minuter"],
+      ["sekund", "sekunder"],
+      ["millisekund", "millisekunder"],
       ","
     ),
     sw: assign(
-      language(
-        function (c) {
-          return c === 1 ? "mwaka" : "miaka";
-        },
-        function (c) {
-          return c === 1 ? "mwezi" : "miezi";
-        },
-        "wiki",
-        function (c) {
-          return c === 1 ? "siku" : "masiku";
-        },
-        function (c) {
-          return c === 1 ? "saa" : "masaa";
-        },
-        "dakika",
-        "sekunde",
-        "milisekunde",
-        "%s baadaye",
-        "tokea %s"
+      onesLanguage(
+        ["mwaka", "miaka"],
+        ["mwezi", "miezi"],
+        ["wiki", "wiki"],
+        ["siku", "masiku"],
+        ["saa", "masaa"],
+        ["dakika", "dakika"],
+        ["sekunde", "sekunde"],
+        ["milisekunde", "milisekunde"]
       ),
       { _numberFirst: true }
     ),
@@ -1532,8 +979,6 @@
       "dakika",
       "saniye",
       "milisaniye",
-      "%s sonra",
-      "%s önce",
       ","
     ),
     th: language(
@@ -1544,9 +989,7 @@
       "ชั่วโมง",
       "นาที",
       "วินาที",
-      "มิลลิวินาที",
-      "อีก %s",
-      "%sที่แล้ว"
+      "มิลลิวินาที"
     ),
     uz: language(
       "yil",
@@ -1577,35 +1020,93 @@
       "phút",
       "giây",
       "mili giây",
-      "%s tới",
-      "%s trước",
       ","
     ),
-    zh_CN: language(
-      "年",
-      "个月",
-      "周",
-      "天",
-      "小时",
-      "分钟",
-      "秒",
-      "毫秒",
-      "%s后",
-      "%s前"
-    ),
-    zh_TW: language(
-      "年",
-      "個月",
-      "周",
-      "天",
-      "小時",
-      "分鐘",
-      "秒",
-      "毫秒",
-      "%s後",
-      "%s前"
-    )
+    zh_CN: language("年", "个月", "周", "天", "小时", "分钟", "秒", "毫秒"),
+    zh_TW: language("年", "個月", "周", "天", "小時", "分鐘", "秒", "毫秒")
   };
+
+  /**
+   * Templates used by the `timeAdverb` option to mark a duration as being in
+   * the future or in the past. `%s` is replaced with the formatted duration.
+   *
+   * Kept separate from `LANGUAGES` so that language definitions stay in sync
+   * with upstream.
+   *
+   * @internal
+   * @type {Record<string, [string, string]>}
+   */
+  var TIME_ADVERBS = {
+    af: ["oor %s", "%s gelede"],
+    ar: ["بعد %s", "منذ %s"],
+    bg: ["след %s", "преди %s"],
+    bn: ["%s পরে", "%s আগে"],
+    ca: ["d'aquí %s", "fa %s"],
+    cs: ["za %s", "před %s"],
+    cy: ["mewn %s", "%s yn ôl"],
+    da: ["om %s", "%s siden"],
+    de: ["in %s", "vor %s"],
+    el: ["σε %s", "%s πριν"],
+    en: ["in %s", "%s ago"],
+    eo: ["post %s", "antaŭ %s"],
+    es: ["en %s", "hace %s"],
+    et: ["%s pärast", "%s tagasi"],
+    eu: ["%s barru", "duela %s"],
+    fa: ["در %s", "%s پیش"],
+    fi: ["%s päästä", "%s sitten"],
+    fo: ["um %s", "%s síðani"],
+    fr: ["dans %s", "il y a %s"],
+    gr: ["σε %s", "%s πριν"],
+    he: ["בעוד %s", "לפני %s"],
+    hr: ["za %s", "prije %s"],
+    hi: ["%s में", "%s पहले"],
+    hu: ["%s múlva", "%s"],
+    id: ["dalam %s", "%s yang lalu"],
+    is: ["eftir %s", "fyrir %s síðan"],
+    it: ["tra %s", "%s fa"],
+    ja: ["%s後", "%s前"],
+    km: ["%sទៀត", "%sមុន"],
+    kn: ["%s ನಂತರ", "%s ಹಿಂದೆ"],
+    ko: ["%s 후", "%s 전"],
+    ku: ["له‌ %s", "%s"],
+    lo: ["ອີກ %s", "%sຜ່ານມາ"],
+    lt: ["po %s", "prieš %s"],
+    lv: ["pēc %s", "pirms %s"],
+    mk: ["за %s", "пред %s"],
+    mn: ["%s дараа", "%s өмнө"],
+    mr: ["%sमध्ये", "%sपूर्वी"],
+    ms: ["dalam %s", "%s yang lepas"],
+    nl: ["over %s", "%s geleden"],
+    nn: ["om %s", "%s sidan"],
+    no: ["om %s", "%s siden"],
+    pl: ["za %s", "%s temu"],
+    pt: ["em %s", "há %s"],
+    ro: ["peste %s", "%s în urmă"],
+    ru: ["через %s", "%s назад"],
+    sq: ["në %s", "%s më parë"],
+    sr: ["за %s", "пре %s"],
+    sr_Latn: ["za %s", "pre %s"],
+    ta: ["%s இல்", "%s முன்"],
+    te: ["%s లో", "%s క్రితం"],
+    uk: ["за %s", "%s тому"],
+    ur: ["%s بعد", "%s قبل"],
+    sk: ["za %s", "pred %s"],
+    sl: ["čez %s", "pred %s"],
+    sv: ["om %s", "för %s sedan"],
+    sw: ["%s baadaye", "tokea %s"],
+    tr: ["%s sonra", "%s önce"],
+    th: ["อีก %s", "%sที่แล้ว"],
+    vi: ["%s tới", "%s trước"],
+    zh_CN: ["%s后", "%s前"],
+    zh_TW: ["%s後", "%s前"]
+  };
+
+  for (var languageCode in TIME_ADVERBS) {
+    if (has(TIME_ADVERBS, languageCode) && has(LANGUAGES, languageCode)) {
+      LANGUAGES[languageCode].future = TIME_ADVERBS[languageCode][0];
+      LANGUAGES[languageCode].past = TIME_ADVERBS[languageCode][1];
+    }
+  }
 
   /**
    * Helper function for creating language definitions.
@@ -1619,29 +1120,137 @@
    * @param {Unit} m
    * @param {Unit} s
    * @param {Unit} ms
-   * @param {string} future
-   * @param {string} past
    * @param {string} [decimal]
    * @returns {Language}
    */
-  function language(y, mo, w, d, h, m, s, ms, future, past, decimal) {
+  function language(y, mo, w, d, h, m, s, ms, decimal) {
     /** @type {Language} */
-    var result = {
-      y: y,
-      mo: mo,
-      w: w,
-      d: d,
-      h: h,
-      m: m,
-      s: s,
-      ms: ms,
-      future: future,
-      past: past
-    };
-    if (typeof decimal !== "undefined") {
+    var result = { y: y, mo: mo, w: w, d: d, h: h, m: m, s: s, ms: ms };
+    if (decimal) {
       result.decimal = decimal;
     }
     return result;
+  }
+
+  /**
+   * @internal
+   * @param {[string, string]} unit
+   * @returns {(c: number) => string}
+   */
+  function onesUnit(unit) {
+    return function (c) {
+      return c === 1 ? unit[0] : unit[1];
+    };
+  }
+
+  /**
+   * Helper for generating languages where the word varies if the count is 1.
+   *
+   * @internal
+   * @param {[string, string]} y
+   * @param {[string, string]} mo
+   * @param {[string, string]} w
+   * @param {[string, string]} d
+   * @param {[string, string]} h
+   * @param {[string, string]} m
+   * @param {[string, string]} s
+   * @param {[string, string]} ms
+   * @param {string} [decimal]
+   * @returns {Language}
+   */
+  function onesLanguage(y, mo, w, d, h, m, s, ms, decimal) {
+    return language(
+      onesUnit(y),
+      onesUnit(mo),
+      onesUnit(w),
+      onesUnit(d),
+      onesUnit(h),
+      onesUnit(m),
+      onesUnit(s),
+      onesUnit(ms),
+      decimal
+    );
+  }
+
+  /**
+   * Romanian uses "de" before the noun for numbers >= 20 (when not ending in 01-19).
+   * See: https://en.wikipedia.org/wiki/Romanian_numbers#Preposition_de
+   *
+   * @internal
+   * @param {string} single
+   * @param {string} plural
+   * @param {string} pluralWithDe
+   * @returns {(c: number) => string}
+   */
+  function romanianUnit(single, plural, pluralWithDe) {
+    return function (c) {
+      if (c === 1) {
+        return single;
+      }
+      if (Math.floor(c) !== c || c === 0) {
+        return plural;
+      }
+      var remainder = c % 100;
+      if (remainder >= 1 && remainder <= 19) {
+        return plural;
+      }
+      return pluralWithDe;
+    };
+  }
+
+  /**
+   * @internal
+   * @param {[string, string, string]} unit
+   * @returns {(c: number) => string}
+   */
+  function slavicUnit(unit) {
+    return function (c) {
+      if (Math.floor(c) !== c) {
+        return unit[2];
+      }
+      if (
+        (c % 100 >= 5 && c % 100 <= 20) ||
+        (c % 10 >= 5 && c % 10 <= 9) ||
+        c % 10 === 0
+      ) {
+        return unit[0];
+      }
+      if (c % 10 === 1) {
+        return unit[1];
+      }
+      if (c > 1) {
+        return unit[2];
+      }
+      return unit[1];
+    };
+  }
+
+  /**
+   * Helper for generating Slavic languages.
+   *
+   * @internal
+   * @param {[string, string, string]} y
+   * @param {[string, string, string]} mo
+   * @param {[string, string, string]} w
+   * @param {[string, string, string]} d
+   * @param {[string, string, string]} h
+   * @param {[string, string, string]} m
+   * @param {[string, string, string]} s
+   * @param {[string, string, string]} ms
+   * @returns {Language}
+   */
+  function slavicLanguage(y, mo, w, d, h, m, s, ms) {
+    return language(
+      slavicUnit(y),
+      slavicUnit(mo),
+      slavicUnit(w),
+      slavicUnit(d),
+      slavicUnit(h),
+      slavicUnit(m),
+      slavicUnit(s),
+      slavicUnit(ms),
+      ","
+    );
   }
 
   /**
@@ -1682,33 +1291,6 @@
   }
 
   /**
-   * Helper function for Slavic languages.
-   *
-   * @internal
-   * @param {number} c
-   * @returns {0 | 1 | 2 | 3}
-   */
-  function getSlavicForm(c) {
-    if (Math.floor(c) !== c) {
-      return 2;
-    }
-    if (
-      (c % 100 >= 5 && c % 100 <= 20) ||
-      (c % 10 >= 5 && c % 10 <= 9) ||
-      c % 10 === 0
-    ) {
-      return 0;
-    }
-    if (c % 10 === 1) {
-      return 1;
-    }
-    if (c > 1) {
-      return 2;
-    }
-    return 0;
-  }
-
-  /**
    * Helper function for Czech or Slovak.
    *
    * @internal
@@ -1736,7 +1318,7 @@
    * @returns {0 | 1 | 2}
    */
   function getLithuanianForm(c) {
-    if (c === 1 || (c % 10 === 1 && c % 100 > 20)) {
+    if (c % 10 === 1 && c % 100 !== 11) {
       return 0;
     }
     if (
@@ -1773,7 +1355,7 @@
 
   /**
    * @internal
-   * @param {Pick<Required<Options>, "language" | "fallbacks" | "languages">} options
+   * @param {Pick<NormalizedOptions, "language" | "fallbacks" | "languages">} options
    * @throws {Error} Throws an error if language is not found.
    * @returns {Language}
    */
@@ -1805,7 +1387,7 @@
    * @internal
    * @param {Piece} piece
    * @param {Language} language
-   * @param {Pick<Required<Options>, "decimal" | "spacer" | "maxDecimalPoints" | "digitReplacements">} options
+   * @param {Pick<NormalizedOptions, "decimal" | "spacer" | "maxDecimalPoints" | "digitReplacements">} options
    */
   function renderPiece(piece, language, options) {
     var unitName = piece.unitName;
@@ -1816,9 +1398,9 @@
 
     /** @type {string} */
     var decimal;
-    if (has(options, "decimal")) {
+    if (typeof options.decimal === "string") {
       decimal = options.decimal;
-    } else if (has(language, "decimal")) {
+    } else if (typeof language.decimal === "string") {
       decimal = language.decimal;
     } else {
       decimal = ".";
@@ -1848,12 +1430,16 @@
       if (digitReplacements) {
         formattedCount = "";
         for (var i = 0; i < countStr.length; i++) {
-          var char = countStr[i];
-          if (char === ".") {
+          var character = countStr[i];
+          if (character === ".") {
             formattedCount += decimal;
           } else {
-            // @ts-ignore because `char` should always be 0-9 at this point.
-            formattedCount += digitReplacements[char];
+            formattedCount +=
+              digitReplacements[
+                /** @type {"0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"} */ (
+                  character
+                )
+              ];
           }
         }
       } else {
@@ -1885,7 +1471,7 @@
   /**
    * @internal
    * @param {number} ms
-   * @param {Pick<Required<Options>, "units" | "unitMeasures" | "largest" | "round">} options
+   * @param {Pick<NormalizedOptions, "units" | "unitMeasures" | "largest" | "round">} options
    * @returns {Piece[]}
    */
   function getPieces(ms, options) {
@@ -1903,7 +1489,8 @@
 
     var units = options.units;
     var unitMeasures = options.unitMeasures;
-    var largest = "largest" in options ? options.largest : Infinity;
+    var largest =
+      typeof options.largest === "number" ? options.largest : Infinity;
 
     if (!units.length) return [];
 
@@ -1932,7 +1519,7 @@
       var unitsRemainingBeforeRound = largest;
       for (i = 0; i < units.length; i++) {
         unitName = units[i];
-        unitCount = unitCounts[unitName];
+        unitCount = /** @type {number} */ (unitCounts[unitName]);
 
         if (unitCount === 0) continue;
 
@@ -1942,10 +1529,13 @@
         if (unitsRemainingBeforeRound === 0) {
           for (var j = i + 1; j < units.length; j++) {
             var smallerUnitName = units[j];
-            var smallerUnitCount = unitCounts[smallerUnitName];
-            unitCounts[unitName] +=
+            var smallerUnitCount = /** @type {number} */ (
+              unitCounts[smallerUnitName]
+            );
+            unitCounts[unitName] =
+              /** @type {number} */ (unitCounts[unitName]) +
               (smallerUnitCount * unitMeasures[smallerUnitName]) /
-              unitMeasures[unitName];
+                unitMeasures[unitName];
             unitCounts[smallerUnitName] = 0;
           }
           break;
@@ -1960,7 +1550,7 @@
       // should become "1 week".
       for (i = units.length - 1; i >= 0; i--) {
         unitName = units[i];
-        unitCount = unitCounts[unitName];
+        unitCount = /** @type {number} */ (unitCounts[unitName]);
 
         if (unitCount === 0) continue;
 
@@ -1975,7 +1565,9 @@
           (rounded * unitMeasures[unitName]) / previousUnitMs
         );
         if (amountOfPreviousUnit) {
-          unitCounts[previousUnitName] += amountOfPreviousUnit;
+          unitCounts[previousUnitName] =
+            /** @type {number} */ (unitCounts[previousUnitName]) +
+            amountOfPreviousUnit;
           unitCounts[unitName] = 0;
         } else {
           break;
@@ -1987,7 +1579,7 @@
     var result = [];
     for (i = 0; i < units.length && result.length < largest; i++) {
       unitName = units[i];
-      unitCount = unitCounts[unitName];
+      unitCount = /** @type {number} */ (unitCounts[unitName]);
       if (unitCount) {
         result.push({ unitName: unitName, unitCount: unitCount });
       }
@@ -1998,10 +1590,12 @@
   /**
    * @internal
    * @param {Piece[]} pieces
-   * @param {Pick<Required<Options>, "units" | "language" | "languages" | "fallbacks" | "delimiter" | "spacer" | "decimal" | "conjunction" | "maxDecimalPoints" | "serialComma" | "digitReplacements" | "timeAdverb">} options
+   * @param {Pick<NormalizedOptions, "units" | "language" | "languages" | "fallbacks" | "delimiter" | "spacer" | "decimal" | "conjunction" | "maxDecimalPoints" | "serialComma" | "digitReplacements" | "timeAdverb">} options
+   * @param {number} [signedMs] The original, signed duration. Only used by the
+   *   `timeAdverb` option, which needs to know whether it's in the past.
    * @returns {string}
    */
-  function formatPieces(pieces, options, ms) {
+  function formatPieces(pieces, options, signedMs) {
     var language = getLanguage(options);
 
     if (!pieces.length) {
@@ -2026,41 +1620,58 @@
       delimiter = ", ";
     }
 
-    // timeAdverb part
-    var adverb = "";
-    if (options.timeAdverb && ms != 0) {
-      adverb = language.future;
-      if (ms < 0) adverb = language.past;
-    }
-
     /** @type {string[]} */
     var renderedPieces = [];
     for (var i = 0; i < pieces.length; i++) {
       renderedPieces.push(renderPiece(pieces[i], language, options));
     }
 
-    var _result;
+    /** @type {string} */
+    var result;
     if (!conjunction || pieces.length === 1) {
-      _result = renderedPieces.join(delimiter);
+      result = renderedPieces.join(delimiter);
     } else if (pieces.length === 2) {
-      _result = renderedPieces.join(conjunction);
+      result = renderedPieces.join(conjunction);
     } else {
-      _result =
+      result =
         renderedPieces.slice(0, -1).join(delimiter) +
         (serialComma ? "," : "") +
         conjunction +
         renderedPieces.slice(-1);
     }
 
-    if (adverb) _result = adverb.replace("%s", _result);
+    return addTimeAdverb(result, signedMs, language, options);
+  }
 
-    return _result;
+  /**
+   * Marks a formatted duration as being in the future or in the past, if the
+   * `timeAdverb` option is on and the language supports it.
+   *
+   * @internal
+   * @param {string} formatted
+   * @param {number | undefined} signedMs
+   * @param {Language} language
+   * @param {Pick<NormalizedOptions, "timeAdverb">} options
+   * @returns {string}
+   */
+  function addTimeAdverb(formatted, signedMs, language, options) {
+    if (!options.timeAdverb || !signedMs) {
+      return formatted;
+    }
+
+    var adverb = signedMs < 0 ? language.past : language.future;
+    if (!adverb) {
+      return formatted;
+    }
+
+    return adverb.replace("%s", formatted);
   }
 
   /**
    * Create a humanizer, which lets you change the default options.
    *
-   * @param {Options} [passedOptions]
+   * @param {Options} [passedOptions] Options to customize the humanizer
+   * @returns {Humanizer} A function that humanizes durations
    */
   function humanizer(passedOptions) {
     /**
@@ -2068,19 +1679,25 @@
      * @param {Options} [humanizerOptions]
      * @returns {string}
      */
-    var result = function humanizer(ms, humanizerOptions) {
-      // Make sure we have a positive number.
-      //
-      // Has the nice side-effect of converting things to numbers. For example,
-      // converts `"123"` and `Number(123)` to `123`.
-      var absMs = Math.abs(ms);
+    var result = /** @type {Humanizer} */ (
+      function humanizer(ms, humanizerOptions) {
+        // Make sure we have a positive number.
+        //
+        // Has the nice side-effect of converting things to numbers. For example,
+        // converts `"123"` and `Number(123)` to `123`.
+        //
+        // The sign is kept around for the `timeAdverb` option.
+        var absoluteMs = Math.abs(ms);
 
-      var options = assign({}, result, humanizerOptions || {});
+        var options = /** @type {NormalizedOptions} */ (
+          assign({}, result, humanizerOptions || {})
+        );
 
-      var pieces = getPieces(absMs, options);
+        var pieces = getPieces(absoluteMs, options);
 
-      return formatPieces(pieces, options, ms);
-    };
+        return formatPieces(pieces, options, Number(ms));
+      }
+    );
 
     return assign(
       result,
@@ -2114,6 +1731,11 @@
    * This is a wrapper around the default humanizer.
    */
   var humanizeDuration = assign(humanizer({}), {
+    /**
+     * Get a list of supported languages.
+     *
+     * @returns {string[]} An array of language codes
+     */
     getSupportedLanguages: function getSupportedLanguages() {
       var result = [];
       for (var language in LANGUAGES) {
@@ -2126,9 +1748,9 @@
     humanizer: humanizer
   });
 
-  // @ts-ignore
+  // @ts-expect-error
   if (typeof define === "function" && define.amd) {
-    // @ts-ignore
+    // @ts-expect-error
     define(function () {
       return humanizeDuration;
     });

@@ -33,9 +33,10 @@
     "Kristijan Jesenski (https://github.com/kjesenski)",
     "Michal Karzel (https://github.com/Misioka)",
     "Batmend Ganbaatar (https://github.com/theironbatka)",
-    "Mikias Menjeta (https://github.com/OMikiasO)"
+    "Mikias Menjeta (https://github.com/OMikiasO)",
+    "Marko Plaznik (https://github.com/ohicee)"
   ],
-  "version": "3.32.1",
+  "version": "3.34.0",
   "description": "Convert millisecond durations to English and many other languages.",
   "homepage": "https://github.com/EvanHahn/HumanizeDuration.js",
   "main": "humanize-duration.js",
@@ -47,13 +48,15 @@
     "test": "node --test"
   },
   "devDependencies": {
-    "@types/ms": "^0.7.34",
-    "@types/node": "^20.11.30",
-    "csv-parse": "^5.5.5",
-    "eslint": "^8.57.0",
+    "@eslint/js": "^10.0.1",
+    "@types/ms": "^2.1.0",
+    "@types/node": "^26.0.1",
+    "csv-parse": "^7.0.0",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
     "ms": "^2.1.3",
-    "prettier": "^3.2.5",
-    "typescript": "^5.4.3"
+    "prettier": "^3.9.4",
+    "typescript": "^6.0.3"
   },
   "keywords": [
     "humanize",
@@ -68,9 +71,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/EvanHahn/HumanizeDuration.js.git"
+    "url": "https://github.com/EvanHahn/HumanizeDuration.js.git"
   },
   "bugs": "https://github.com/EvanHahn/HumanizeDuration.js/issues",
+  "funding": "https://github.com/sponsors/EvanHahn",
   "license": "Unlicense",
   "files": [
     "README.md",
